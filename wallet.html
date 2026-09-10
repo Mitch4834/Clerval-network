@@ -1700,74 +1700,201 @@ function setPaymentLoading(
 
 
 
-/* =====================================================
-   RECHARGE WALLET
-===================================================== */
+/ /* =====================================================
+    RECHARGE WALLET
+ ===================================================== */
 
-async function rechargeWallet() {
+ async function rechargeWallet() {
 
-
-    hidePaymentMessage();
-
-
-    const amount =
-        Number(
-            customAmount.value
-        );
+     hidePaymentMessage();
 
 
-    const phone =
-        phoneInput.value.trim();
+     const amount =
+         Number(
+             customAmount.value
+         );
 
 
-
-    /* VALIDATION */
-
-    if (!amount || amount <= 0) {
-
-        showPaymentMessage(
-            "Veuillez sélectionner ou entrer un montant.",
-            "error"
-        );
-
-        return;
-
-    }
+     const phone =
+         phoneInput.value.trim();
 
 
-    if (!phone) {
+     /* =================================================
+        VALIDATION MONTANT
+     ================================================= */
 
-        showPaymentMessage(
-            "Veuillez entrer votre numéro LogaPay.",
-            "error"
-        );
+     if (
+         !amount ||
+         amount <= 0
+     ) {
 
-        phoneInput.focus();
+         showPaymentMessage(
+             "Veuillez sélectionner ou entrer un montant.",
+             "error"
+         );
 
-        return;
+         return;
 
-    }
-
-
-
-    /* UTILISATEUR */
-
-    if (!currentUser) {
-
-        showPaymentMessage(
-            "Votre session utilisateur est introuvable. Veuillez vous reconnecter.",
-            "error"
-        );
-
-        return;
-
-    }
+     }
 
 
+     /* =================================================
+        VALIDATION TELEPHONE
+     ================================================= */
 
-    setPaymentLoading(true);
+     if (!phone) {
+
+         showPaymentMessage(
+             "Veuillez entrer votre numéro LogaPay.",
+             "error"
+         );
+
+         phoneInput.focus();
+
+         return;
+
+     }
 
 
+     /* =================================================
+        UTILISATEUR
+     ================================================= */
+
+     const userId =
+         getUserIdFromUrl();
+
+
+     if (!userId) {
+
+         showPaymentMessage(
+             "Identifiant utilisateur introuvable.",
+             "error"
+         );
+
+         return;
+
+     }
+
+
+     setPaymentLoading(true);
+
+
+     try {
+
+         const response =
+             await fetch(
+                 API_URL,
+                 {
+
+                     method: "POST",
+
+                     headers: {
+
+                         "Content-Type":
+                             "text/plain;charset=utf-8"
+
+                     },
+
+                     body:
+                         JSON.stringify({
+
+                             action:
+                                 "wallet_recharge",
+
+                             userId:
+                                 userId,
+
+                             phone:
+                                 phone,
+
+                             amount:
+                                 amount
+
+                         })
+
+                 }
+             );
+
+
+         const result =
+             await response.json();
+
+
+         console.log(
+             "REPONSE RECHARGE :",
+             result
+         );
+
+
+         setPaymentLoading(false);
+
+
+         if (
+             !result ||
+             !result.success
+         ) {
+
+             showPaymentMessage(
+                 result &&
+                 result.message
+                     ? result.message
+                     : "Le paiement n'a pas pu être effectué.",
+                 "error"
+             );
+
+             return;
+
+         }
+
+
+         /* =================================================
+            NOUVEAU SOLDE
+         ================================================= */
+
+         if (
+             typeof result.balance !==
+             "undefined"
+         ) {
+
+             walletBalance =
+                 Number(
+                     result.balance
+                 );
+
+             updateBalance();
+
+         }
+
+
+         showPaymentMessage(
+             result.message ||
+             "Votre wallet a été rechargé avec succès.",
+             "success"
+         );
+
+
+         loadTransactions();
+
+
+     } catch (error) {
+
+         console.error(
+             "Erreur recharge :",
+             error
+         );
+
+
+         setPaymentLoading(false);
+
+
+         showPaymentMessage(
+             "Impossible de contacter le serveur. Vérifiez votre connexion.",
+             "error"
+         );
+
+     }
+
+ }
 
     /* =================================================
        APPEL API
@@ -1947,104 +2074,116 @@ payButton.addEventListener(
 
 
 
-/* =====================================================
-   TRANSACTIONS
-===================================================== */
+ /* =====================================================
+    TRANSACTIONS
+ ===================================================== */
 
-async function loadTransactions() {
+ async function loadTransactions() {
 
-
-    /*
-       Cette fonction sera connectée au backend.
-
-       Exemple :
-
-       action: "wallet_transactions"
-
-    */
+     const userId =
+         getUserIdFromUrl();
 
 
-    if (!API_URL || !currentUser) {
+     if (
+         !API_URL ||
+         !userId
+     ) {
 
-        return;
+         console.log(
+             "API ou ID utilisateur absent."
+         );
 
-    }
+         return;
 
-
-    try {
-
-
-        const response =
-            await fetch(
-                API_URL,
-                {
-
-                    method: "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "text/plain;charset=utf-8"
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            action:
-                                "wallet_transactions",
-
-                            userId:
-                                currentUser.id
-
-                        })
-
-                }
-            );
+     }
 
 
-        const result =
-            await response.json();
+     try {
+
+         const response =
+             await fetch(
+                 API_URL,
+                 {
+
+                     method: "POST",
+
+                     headers: {
+
+                         "Content-Type":
+                             "text/plain;charset=utf-8"
+
+                     },
+
+                     body:
+                         JSON.stringify({
+
+                             action:
+                                 "wallet_transactions",
+
+                             userId:
+                                 userId
+
+                         })
+
+                 }
+             );
 
 
-        if (!result.success) {
-
-            return;
-
-        }
+         const result =
+             await response.json();
 
 
-        renderTransactions(
-            result.transactions || []
-        );
+         console.log(
+             "TRANSACTIONS :",
+             result
+         );
 
 
-        if (
-            typeof result.balance !==
-            "undefined"
-        ) {
+         if (
+             !result ||
+             !result.success
+         ) {
 
-            walletBalance =
-                Number(
-                    result.balance
-                );
+             console.error(
+                 "Erreur transactions :",
+                 result
+             );
 
-            updateBalance();
+             return;
 
-        }
+         }
 
 
-    } catch (error) {
+         renderTransactions(
+             result.transactions || []
+         );
 
-        console.error(
-            "Erreur transactions :",
-            error
-        );
 
-    }
+         if (
+             typeof result.balance !==
+             "undefined"
+         ) {
 
-}
+             walletBalance =
+                 Number(
+                     result.balance
+                 );
 
+             updateBalance();
+
+         }
+
+
+     } catch (error) {
+
+         console.error(
+             "Erreur chargement transactions :",
+             error
+         );
+
+     }
+
+ }
 
 
 /* =====================================================
@@ -2205,35 +2344,86 @@ function escapeHTML(value) {
 
 
 
-/* =====================================================
-   NAVIGATION
-===================================================== */
+ /* =====================================================
+    NAVIGATION
+ ===================================================== */
 
-function goToDashboard() {
+ function goToDashboard() {
 
-    window.location.href =
-        "achtekod.html";
-
-}
+     const id =
+         getUserIdFromUrl();
 
 
-function goToRoulette() {
+     if (!id) {
 
-    window.location.href =
-        "roulette.html";
+         alert(
+             "Identifiant utilisateur introuvable."
+         );
 
-}
+         return;
 
-
-function goToAccount() {
-
-    window.location.href =
-        "compte.html";
-
-}
+     }
 
 
+     window.location.href =
+         "achtekod.html?id=" +
+         encodeURIComponent(
+             id
+         );
 
+ }
+
+
+ function goToRoulette() {
+
+     const id =
+         getUserIdFromUrl();
+
+
+     if (!id) {
+
+         alert(
+             "Identifiant utilisateur introuvable."
+         );
+
+         return;
+
+     }
+
+
+     window.location.href =
+         "roulette.html?id=" +
+         encodeURIComponent(
+             id
+         );
+
+ }
+
+
+ function goToAccount() {
+
+     const id =
+         getUserIdFromUrl();
+
+
+     if (!id) {
+
+         alert(
+             "Identifiant utilisateur introuvable."
+         );
+
+         return;
+
+     }
+
+
+     window.location.href =
+         "compte.html?id=" +
+         encodeURIComponent(
+             id
+         );
+
+ }
 /* =====================================================
    INITIALISATION
 ===================================================== */
