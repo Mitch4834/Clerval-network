@@ -1598,6 +1598,83 @@ const APP_URL =
 
 
 /* ==========================================================
+   RECUPERER ID UTILISATEUR
+========================================================== */
+
+function getUserIdFromUrl() {
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  let id =
+    params.get("id");
+
+
+  /* Si pas d'ID dans l'URL,
+     récupérer celui enregistré après connexion */
+
+  if (!id) {
+
+    try {
+
+      const savedUser =
+        localStorage.getItem(
+          "clerval_user"
+        );
+
+      if (savedUser) {
+
+        const user =
+          JSON.parse(
+            savedUser
+          );
+
+        if (user && user.id) {
+
+          id =
+            user.id;
+
+        }
+
+      }
+
+    } catch (error) {
+
+      console.error(
+        "Erreur lecture utilisateur :",
+        error
+      );
+
+    }
+
+  }
+
+
+  if (id) {
+
+    id =
+      String(id).trim();
+
+  }
+
+
+  console.log(
+    "ID UTILISATEUR :",
+    id
+  );
+
+
+  return id || null;
+
+}
+
+
+const userId =
+  getUserIdFromUrl();
+
+/* ==========================================================
    TOKEN SESSION
 ========================================================== */
 
