@@ -751,8 +751,17 @@ body {
 /* ==========================================================
    CLERVAL'S NETWORK
    CONNEXION + INSCRIPTION
-   Google Apps Script
+   FRONTEND GITHUB
+   API GOOGLE APPS SCRIPT
 ========================================================== */
+
+
+/* ==========================================================
+   API
+========================================================== */
+
+const API_URL =
+    "https://script.google.com/macros/s/AKfycbwncLkGYZyyf6kOxc9u9XpRiRgjLIn88zD7Jc7kzlwIl82WDVjyTBNQFnM9IDX9852e/exec";
 
 
 /* ==========================================================
@@ -764,7 +773,6 @@ const loginView =
 
 const registerView =
     document.getElementById("registerView");
-
 
 const phoneInput =
     document.getElementById("phone");
@@ -780,7 +788,6 @@ const loginButton =
 
 const loginMessage =
     document.getElementById("loginMessage");
-
 
 const registerName =
     document.getElementById("registerName");
@@ -805,7 +812,6 @@ const registerButton =
 
 const registerMessage =
     document.getElementById("registerMessage");
-
 
 const registerLink =
     document.getElementById("registerLink");
@@ -905,17 +911,24 @@ if (passwordToggle) {
         "click",
         function() {
 
-            if (passwordInput.type === "password") {
+            if (
+                passwordInput.type ===
+                "password"
+            ) {
 
-                passwordInput.type = "text";
+                passwordInput.type =
+                    "text";
 
-                passwordToggle.textContent = "🙈";
+                passwordToggle.textContent =
+                    "🙈";
 
             } else {
 
-                passwordInput.type = "password";
+                passwordInput.type =
+                    "password";
 
-                passwordToggle.textContent = "👁";
+                passwordToggle.textContent =
+                    "👁";
 
             }
 
@@ -935,17 +948,24 @@ if (registerPasswordToggle) {
         "click",
         function() {
 
-            if (registerPassword.type === "password") {
+            if (
+                registerPassword.type ===
+                "password"
+            ) {
 
-                registerPassword.type = "text";
+                registerPassword.type =
+                    "text";
 
-                registerPasswordToggle.textContent = "🙈";
+                registerPasswordToggle.textContent =
+                    "🙈";
 
             } else {
 
-                registerPassword.type = "password";
+                registerPassword.type =
+                    "password";
 
-                registerPasswordToggle.textContent = "👁";
+                registerPasswordToggle.textContent =
+                    "👁";
 
             }
 
@@ -969,15 +989,12 @@ function showMessage(
         return;
     }
 
-
     element.textContent =
         text;
-
 
     element.classList.add(
         "show"
     );
-
 
     if (success) {
 
@@ -1002,15 +1019,12 @@ function hideMessage(element) {
         return;
     }
 
-
     element.textContent =
         "";
-
 
     element.classList.remove(
         "show"
     );
-
 
     element.classList.remove(
         "success"
@@ -1041,20 +1055,13 @@ function validatePhone(phone) {
     const cleanPhone =
         normalizePhone(phone);
 
-
     if (!cleanPhone) {
-
         return false;
-
     }
-
 
     if (cleanPhone.length < 8) {
-
         return false;
-
     }
-
 
     return /^\+?[0-9]+$/.test(
         cleanPhone
@@ -1075,10 +1082,8 @@ function setLoginLoading(
         return;
     }
 
-
     loginButton.disabled =
         loading;
-
 
     if (loading) {
 
@@ -1107,10 +1112,8 @@ function setRegisterLoading(
         return;
     }
 
-
     registerButton.disabled =
         loading;
-
 
     if (loading) {
 
@@ -1137,18 +1140,12 @@ function validateLogin() {
         loginMessage
     );
 
-
     const phone =
         phoneInput.value.trim();
-
 
     const password =
         passwordInput.value;
 
-
-    /* ======================================================
-       TELEPHONE
-    ====================================================== */
 
     if (!phone) {
 
@@ -1179,10 +1176,6 @@ function validateLogin() {
 
     }
 
-
-    /* ======================================================
-       MOT DE PASSE
-    ====================================================== */
 
     if (!password) {
 
@@ -1223,20 +1216,12 @@ function validateLogin() {
    CONNEXION
 ========================================================== */
 
-function loginUser() {
-
-    /* ======================================================
-       VALIDATION
-    ====================================================== */
+async function loginUser() {
 
     if (!validateLogin()) {
         return;
     }
 
-
-    /* ======================================================
-       RECUPERATION DES DONNEES
-    ====================================================== */
 
     const phone =
         normalizePhone(
@@ -1247,237 +1232,353 @@ function loginUser() {
         passwordInput.value;
 
 
-    /* ======================================================
-       LOADING
-    ====================================================== */
-
     setLoginLoading(true);
 
 
-    /* ======================================================
-       APPEL BACKEND
-    ====================================================== */
+    try {
 
-    google.script.run
-
-        /* ==================================================
-           SUCCES
-        ================================================== */
-
-        .withSuccessHandler(
-            function(result) {
-
-                console.log(
-                    "LOGIN RESULT :",
-                    result
-                );
-
-
-                /* ==========================================
-                   VERIFIER REPONSE
-                ========================================== */
-
-                if (
-                    !result ||
-                    !result.success
-                ) {
-
-                    setLoginLoading(false);
-
-                    showMessage(
-                        loginMessage,
-                        result &&
-                        result.message
-                            ? result.message
-                            : "Numéro ou mot de passe incorrect.",
-                        false
-                    );
-
-                    return;
-                }
-
-
-                /* ==========================================
-                   VERIFIER TOKEN
-                ========================================== */
-
-                if (!result.token) {
-
-                    setLoginLoading(false);
-
-                    showMessage(
-                        loginMessage,
-                        "Erreur : aucune session n'a été créée.",
-                        false
-                    );
-
-                    console.error(
-                        "TOKEN ABSENT :",
-                        result
-                    );
-
-                    return;
-                }
-
-
-                /* ==========================================
-                   VERIFIER UTILISATEUR
-                ========================================== */
-
-                if (
-                    !result.user ||
-                    !result.user.id
-                ) {
-
-                    setLoginLoading(false);
-
-                    console.error(
-                        "UTILISATEUR OU ID ABSENT :",
-                        result
-                    );
-
-                    showMessage(
-                        loginMessage,
-                        "Connexion réussie, mais l'identifiant utilisateur est introuvable.",
-                        false
-                    );
-
-                    return;
-                }
-
-
-                /* ==========================================
-                   ENREGISTRER TOKEN
-                ========================================== */
-
-                localStorage.setItem(
-                    "clerval_token",
-                    result.token
-                );
-
-
-                /* ==========================================
-                   ENREGISTRER UTILISATEUR
-                ========================================== */
-
-                localStorage.setItem(
-                    "clerval_user",
-                    JSON.stringify(
-                        result.user
-                    )
-                );
-
-
-                /* ==========================================
-                   ENREGISTRER DATE CONNEXION
-                ========================================== */
-
-                localStorage.setItem(
-                    "clerval_login_time",
-                    Date.now().toString()
-                );
-
-
-                /* ==========================================
-                   RECUPERER ID UTILISATEUR
-                ========================================== */
-
-                const userId =
-                    String(
-                        result.user.id
-                    ).trim();
-
-
-                console.log(
-                    "TOKEN ENREGISTRE :",
-                    result.token
-                );
-
-                console.log(
-                    "UTILISATEUR :",
-                    result.user
-                );
-
-                console.log(
-                    "ID UTILISATEUR :",
-                    userId
-                );
-
-
-                /* ==========================================
-                   URL WEB APP
-                ========================================== */
-
-                const APP_URL =
-                    "https://script.google.com/macros/s/AKfycbwncLkGYZyyf6kOxc9u9XpRiRgjLIn88zD7Jc7kzlwIl82WDVjyTBNQFnM9IDX9852e/exec";
-
-
-                /* ==========================================
-                   CONSTRUIRE URL COMPTE
-                ========================================== */
-
-                const accountUrl =
-                    APP_URL +
-                    "?page=espace&id=" +
-                    encodeURIComponent(
-                        userId
-                    );
-
-
-                console.log(
-                    "URL COMPTE :",
-                    accountUrl
-                );
-
-
-                /* ==========================================
-                   REDIRECTION
-                ========================================== */
-
-                setLoginLoading(false);
-
-
-                window.top.location.href =
-                    accountUrl;
-
-            }
-        )
-
-
-        /* ==================================================
-           ERREUR SERVEUR
-        ================================================== */
-
-        .withFailureHandler(
-            function(error) {
-
-                console.error(
-                    "ERREUR BACKEND LOGIN :",
-                    error
-                );
-
-
-                setLoginLoading(false);
-
-
-                showMessage(
-                    loginMessage,
-                    "Impossible de contacter le serveur. Veuillez réessayer.",
-                    false
-                );
-
-            }
-        )
-
-
-        /* ==================================================
-           FONCTION APPS SCRIPT
-        ================================================== */
-
-        .loginUser(
-            phone,
-            password
+        console.log(
+            "CONNEXION EN COURS..."
         );
+
+
+        /* ==================================================
+           APPEL API
+        ================================================== */
+
+        const response =
+            await fetch(
+                API_URL,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "text/plain;charset=utf-8"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            action:
+                                "loginUser",
+
+                            phone:
+                                phone,
+
+                            password:
+                                password
+                        })
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        console.log(
+            "LOGIN RESULT :",
+            result
+        );
+
+
+        /* ==================================================
+           VERIFIER REPONSE
+        ================================================== */
+
+        if (
+            !result ||
+            !result.success
+        ) {
+
+            setLoginLoading(false);
+
+            showMessage(
+                loginMessage,
+                result &&
+                result.message
+                    ? result.message
+                    : "Numéro ou mot de passe incorrect.",
+                false
+            );
+
+            return;
+
+        }
+
+
+        /* ==================================================
+           TOKEN
+        ================================================== */
+
+        if (!result.token) {
+
+            setLoginLoading(false);
+
+            showMessage(
+                loginMessage,
+                "Erreur : aucune session n'a été créée.",
+                false
+            );
+
+            console.error(
+                "TOKEN ABSENT :",
+                result
+            );
+
+            return;
+
+        }
+
+
+        /* ==================================================
+           UTILISATEUR
+        ================================================== */
+
+        if (
+            !result.user ||
+            !result.user.id
+        ) {
+
+            setLoginLoading(false);
+
+            console.error(
+                "UTILISATEUR OU ID ABSENT :",
+                result
+            );
+
+            showMessage(
+                loginMessage,
+                "Connexion réussie, mais l'identifiant utilisateur est introuvable.",
+                false
+            );
+
+            return;
+
+        }
+
+
+        /* ==================================================
+           ENREGISTRER TOKEN
+        ================================================== */
+
+        localStorage.setItem(
+            "clerval_token",
+            result.token
+        );
+
+
+        /* ==================================================
+           ENREGISTRER UTILISATEUR
+        ================================================== */
+
+        localStorage.setItem(
+            "clerval_user",
+            JSON.stringify(
+                result.user
+            )
+        );
+
+
+        /* ==================================================
+           DATE CONNEXION
+        ================================================== */
+
+        localStorage.setItem(
+            "clerval_login_time",
+            Date.now().toString()
+        );
+
+
+        /* ==================================================
+           ID UTILISATEUR
+        ================================================== */
+
+        const userId =
+            String(
+                result.user.id
+            ).trim();
+
+
+        console.log(
+            "TOKEN :",
+            result.token
+        );
+
+        console.log(
+            "UTILISATEUR :",
+            result.user
+        );
+
+        console.log(
+            "ID UTILISATEUR :",
+            userId
+        );
+
+
+        /* ==================================================
+           URL COMPTE GITHUB
+           
+           IMPORTANT :
+           REMPLACE CETTE URL PAR TON URL GITHUB PAGES
+        ================================================== */
+
+        const ACCOUNT_URL =
+            "https://TON-USERNAME.github.io/TON-PROJET/compte.html";
+
+
+        const accountUrl =
+            ACCOUNT_URL +
+            "?id=" +
+            encodeURIComponent(
+                userId
+            );
+
+
+        console.log(
+            "URL COMPTE :",
+            accountUrl
+        );
+
+
+        /* ==================================================
+           REDIRECTION
+        ================================================== */
+
+        setLoginLoading(false);
+
+
+        window.location.href =
+            accountUrl;
+
+
+    } catch (error) {
+
+        console.error(
+            "ERREUR CONNEXION :",
+            error
+        );
+
+
+        setLoginLoading(false);
+
+
+        showMessage(
+            loginMessage,
+            "Impossible de contacter le serveur. Vérifiez votre connexion et réessayez.",
+            false
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   VALIDATION INSCRIPTION
+========================================================== */
+
+function validateRegister() {
+
+    hideMessage(
+        registerMessage
+    );
+
+
+    const name =
+        registerName.value.trim();
+
+    const phone =
+        registerPhone.value.trim();
+
+    const password =
+        registerPassword.value;
+
+    const confirmation =
+        registerPasswordConfirm.value;
+
+
+    if (!name) {
+
+        showMessage(
+            registerMessage,
+            "Veuillez entrer votre nom.",
+            false
+        );
+
+        registerName.focus();
+
+        return false;
+
+    }
+
+
+    if (!phone) {
+
+        showMessage(
+            registerMessage,
+            "Veuillez entrer votre numéro de téléphone.",
+            false
+        );
+
+        registerPhone.focus();
+
+        return false;
+
+    }
+
+
+    if (!validatePhone(phone)) {
+
+        showMessage(
+            registerMessage,
+            "Veuillez entrer un numéro de téléphone valide.",
+            false
+        );
+
+        registerPhone.focus();
+
+        return false;
+
+    }
+
+
+    if (
+        password.length < 6
+    ) {
+
+        showMessage(
+            registerMessage,
+            "Le mot de passe doit contenir au moins 6 caractères.",
+            false
+        );
+
+        registerPassword.focus();
+
+        return false;
+
+    }
+
+
+    if (
+        password !==
+        confirmation
+    ) {
+
+        showMessage(
+            registerMessage,
+            "Les deux mots de passe ne correspondent pas.",
+            false
+        );
+
+        registerPasswordConfirm.focus();
+
+        return false;
+
+    }
+
+
+    return true;
 
 }
 
@@ -1486,18 +1587,12 @@ function loginUser() {
    INSCRIPTION
 ========================================================== */
 
-function registerUser() {
+async function registerUser() {
 
     if (!validateRegister()) {
-
         return;
-
     }
 
-
-    /* ======================================================
-       DONNEES
-    ====================================================== */
 
     const data = {
 
@@ -1518,152 +1613,138 @@ function registerUser() {
     };
 
 
-    /* ======================================================
-       LOADING
-    ====================================================== */
-
     setRegisterLoading(
         true
     );
 
 
-    /* ======================================================
-       APPEL BACKEND
-    ====================================================== */
+    try {
 
-    google.script.run
-
-        .withSuccessHandler(
-            function(result) {
-
-                console.log(
-                    "REGISTER RESULT :",
-                    result
-                );
+        console.log(
+            "INSCRIPTION EN COURS..."
+        );
 
 
-                setRegisterLoading(
-                    false
-                );
+        const response =
+            await fetch(
+                API_URL,
+                {
+                    method: "POST",
 
+                    headers: {
+                        "Content-Type":
+                            "text/plain;charset=utf-8"
+                    },
 
-                /* ==========================================
-                   ERREUR
-                ========================================== */
+                    body:
+                        JSON.stringify({
+                            action:
+                                "registerUser",
 
-                if (
-                    !result ||
-                    !result.success
-                ) {
-
-                    showMessage(
-                        registerMessage,
-                        result &&
-                        result.message
-                            ? result.message
-                            : "Impossible de créer votre compte.",
-                        false
-                    );
-
-
-                    return;
-
+                            data:
+                                data
+                        })
                 }
+            );
 
 
-                /* ==========================================
-                   SUCCES
-                ========================================== */
+        const result =
+            await response.json();
+
+
+        console.log(
+            "REGISTER RESULT :",
+            result
+        );
+
+
+        setRegisterLoading(
+            false
+        );
+
+
+        if (
+            !result ||
+            !result.success
+        ) {
+
+            showMessage(
+                registerMessage,
+                result &&
+                result.message
+                    ? result.message
+                    : "Impossible de créer votre compte.",
+                false
+            );
+
+            return;
+
+        }
+
+
+        showMessage(
+            registerMessage,
+            "Compte créé avec succès ! Vous pouvez maintenant vous connecter.",
+            true
+        );
+
+
+        phoneInput.value =
+            data.phone;
+
+
+        passwordInput.value =
+            "";
+
+
+        registerPassword.value =
+            "";
+
+
+        registerPasswordConfirm.value =
+            "";
+
+
+        setTimeout(
+            function() {
+
+                showLogin();
+
 
                 showMessage(
-                    registerMessage,
-                    "Compte créé avec succès ! Vous pouvez maintenant vous connecter.",
+                    loginMessage,
+                    "Votre compte a été créé. Connectez-vous maintenant.",
                     true
                 );
 
 
-                /* ==========================================
-                   PREPARER CONNEXION
-                ========================================== */
+                passwordInput.focus();
 
-                phoneInput.value =
-                    data.phone;
-
-
-                passwordInput.value =
-                    "";
-
-
-                registerPassword.value =
-                    "";
-
-
-                registerPasswordConfirm.value =
-                    "";
-
-
-                /* ==========================================
-                   RETOUR CONNEXION
-                ========================================== */
-
-                setTimeout(
-                    function() {
-
-                        showLogin();
-
-
-                        showMessage(
-                            loginMessage,
-                            "Votre compte a été créé. Connectez-vous maintenant.",
-                            true
-                        );
-
-
-                        passwordInput.focus();
-
-                    },
-                    1200
-                );
-
-            }
-        )
-
-
-        /* ==================================================
-           ERREUR SERVEUR
-        ================================================== */
-
-        .withFailureHandler(
-            function(error) {
-
-                console.error(
-                    "ERREUR BACKEND INSCRIPTION :",
-                    error
-                );
-
-
-                setRegisterLoading(
-                    false
-                );
-
-
-                showMessage(
-                    registerMessage,
-                    "Impossible de contacter le serveur. Veuillez réessayer.",
-                    false
-                );
-
-            }
-        )
-
-
-        /* ==================================================
-           APPEL BACKEND
-        ================================================== */
-
-        .registerUser(
-            data
+            },
+            1200
         );
+
+
+    } catch (error) {
+
+        console.error(
+            "ERREUR INSCRIPTION :",
+            error
+        );
+
+
+        setRegisterLoading(
+            false
+        );
+
+
+        showMessage(
+            registerMessage,
+            "Impossible de contacter le serveur. Veuillez réessayer.",
+            false
+        );
+
+    }
 
 }
 
@@ -1706,7 +1787,10 @@ if (passwordInput) {
         "keydown",
         function(event) {
 
-            if (event.key === "Enter") {
+            if (
+                event.key ===
+                "Enter"
+            ) {
 
                 event.preventDefault();
 
@@ -1730,7 +1814,10 @@ if (registerPasswordConfirm) {
         "keydown",
         function(event) {
 
-            if (event.key === "Enter") {
+            if (
+                event.key ===
+                "Enter"
+            ) {
 
                 event.preventDefault();
 
@@ -1756,7 +1843,6 @@ if (forgotPassword) {
 
             event.preventDefault();
 
-
             showMessage(
                 loginMessage,
                 "La récupération du mot de passe sera disponible prochainement.",
@@ -1769,7 +1855,6 @@ if (forgotPassword) {
 }
 
 </script>
-
 
 
 </body>
