@@ -1392,97 +1392,165 @@ body {
 
 <script>
 
-/* =====================================================
-   CONFIGURATION API
-===================================================== */
+ /* =====================================================
+    CONFIGURATION API
+ ===================================================== */
+
+ const API_URL =
+     "https://script.google.com/macros/s/AKfycbwncLkGYZyyf6kOxc9u9XpRiRgjLIn88zD7Jc7kzlwIl82WDVjyTBNQFnM9IDX9852e/exec";
 
 
-/*
-   L'URL sera ajoutée lorsque ton
-   Google Apps Script sera prêt.
+ /* =====================================================
+    UTILISATEUR
+ ===================================================== */
 
-   Exemple :
+ let currentUser = null;
 
-   const API_URL =
-   "https://script.google.com/macros/s/XXXXXXXX/exec";
-*/
+ let walletBalance = 0;
 
 
-const API_URL = "";
+ /* =====================================================
+    RECUPERER ID DEPUIS URL
+ ===================================================== */
+
+ function getUserIdFromUrl() {
+
+     const params =
+         new URLSearchParams(
+             window.location.search
+         );
+
+     let id =
+         params.get("id");
+
+
+     /*
+      * Si l'ID n'est pas dans l'URL,
+      * essayer le localStorage.
+      */
+
+     if (!id) {
+
+         try {
+
+             const savedUser =
+                 localStorage.getItem(
+                     "clerval_user"
+                 );
+
+             if (savedUser) {
+
+                 const user =
+                     JSON.parse(
+                         savedUser
+                     );
+
+                 if (
+                     user &&
+                     user.id
+                 ) {
+
+                     id =
+                         user.id;
+
+                 }
+
+             }
+
+         } catch (error) {
+
+             console.error(
+                 "Erreur utilisateur :",
+                 error
+             );
+
+         }
+
+     }
+
+
+     return id
+         ? String(id).trim()
+         : null;
+
+ }
+
+
+ /* =====================================================
+    CHARGER UTILISATEUR
+ ===================================================== */
+
+ function loadUser() {
+
+     const savedUser =
+         localStorage.getItem(
+             "clerval_user"
+         );
+
+
+     if (savedUser) {
+
+         try {
+
+             currentUser =
+                 JSON.parse(
+                     savedUser
+                 );
+
+         } catch (error) {
+
+             console.error(
+                 "Utilisateur invalide",
+                 error
+             );
+
+             currentUser = null;
+
+         }
+
+     }
+
+
+     /*
+      * Vérifier l'ID présent dans l'URL.
+      */
+
+     const urlUserId =
+         getUserIdFromUrl();
+
+
+     /*
+      * Si nous avons un ID dans l'URL,
+      * l'utiliser comme référence.
+      */
+
+     if (urlUserId) {
+
+         if (!currentUser) {
+
+             currentUser = {
+                 id: urlUserId
+             };
+
+         } else {
+
+             currentUser.id =
+                 urlUserId;
+
+         }
+
+     }
+
+
+     console.log(
+         "UTILISATEUR WALLET :",
+         currentUser
+     );
+
+ }
 
 
 
-/* =====================================================
-   UTILISATEUR
-===================================================== */
-
-let currentUser = null;
-
-
-/* =====================================================
-   SOLDE
-===================================================== */
-
-let walletBalance = 0;
-
-
-/* =====================================================
-   ELEMENTS
-===================================================== */
-
-const balanceElement =
-    document.getElementById("balance");
-
-const paymentCard =
-    document.getElementById("paymentCard");
-
-const rechargeButton =
-    document.getElementById("rechargeButton");
-
-const payButton =
-    document.getElementById("payButton");
-
-const customAmount =
-    document.getElementById("customAmount");
-
-const phoneInput =
-    document.getElementById("phone");
-
-const paymentMessage =
-    document.getElementById("paymentMessage");
-
-
-
-/* =====================================================
-   CHARGER UTILISATEUR
-===================================================== */
-
-function loadUser() {
-
-    const savedUser =
-        localStorage.getItem(
-            "clerval_user"
-        );
-
-
-    if (savedUser) {
-
-        try {
-
-            currentUser =
-                JSON.parse(savedUser);
-
-        } catch (error) {
-
-            console.error(
-                "Utilisateur invalide"
-            );
-
-        }
-
-    }
-
-}
 
 
 /* =====================================================
