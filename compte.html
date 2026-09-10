@@ -1589,165 +1589,45 @@ Chargement de votre compte...
 
 <script>
 
+
+<script>
+
 /* ==========================================================
    CONFIGURATION
 ========================================================== */
 
-const APP_URL =
+const API_URL =
   "https://script.google.com/macros/s/AKfycbwncLkGYZyyf6kOxc9u9XpRiRgjLIn88zD7Jc7kzlwIl82WDVjyTBNQFnM9IDX9852e/exec";
 
-
-/* ==========================================================
-   RECUPERER ID UTILISATEUR
-========================================================== */
-
-function getUserIdFromUrl() {
-
-  const params =
-    new URLSearchParams(
-      window.location.search
-    );
-
-  let id =
-    params.get("id");
-
-
-  /* Si pas d'ID dans l'URL,
-     récupérer celui enregistré après connexion */
-
-  if (!id) {
-
-    try {
-
-      const savedUser =
-        localStorage.getItem(
-          "clerval_user"
-        );
-
-      if (savedUser) {
-
-        const user =
-          JSON.parse(
-            savedUser
-          );
-
-        if (user && user.id) {
-
-          id =
-            user.id;
-
-        }
-
-      }
-
-    } catch (error) {
-
-      console.error(
-        "Erreur lecture utilisateur :",
-        error
-      );
-
-    }
-
-  }
-
-
-  if (id) {
-
-    id =
-      String(id).trim();
-
-  }
-
-
-  console.log(
-    "ID UTILISATEUR :",
-    id
-  );
-
-
-  return id || null;
-
-}
-
-
-const userId =
-  getUserIdFromUrl();
 
 /* ==========================================================
    TOKEN SESSION
 ========================================================== */
 
 const token =
-  localStorage.getItem(
-    "clerval_token"
-  );
+  localStorage.getItem("clerval_token");
 
 
 /* ==========================================================
-   UTILITAIRE — RÉCUPÉRER ID UTILISATEUR
+   RÉCUPÉRER ID UTILISATEUR
 ========================================================== */
 
 function getUserIdFromUrl() {
 
   try {
 
-    let id = null;
-
-
-    /*
-     * 1. URL de la page actuelle
-     */
-
-    try {
-
-      const params =
-        new URLSearchParams(
-          window.location.search
-        );
-
-      id =
-        params.get("id");
-
-    } catch (error) {
-
-      console.log(
-        "Impossible de lire l'URL actuelle."
+    const params =
+      new URLSearchParams(
+        window.location.search
       );
 
-    }
+    let id =
+      params.get("id");
 
 
     /*
-     * 2. URL principale
-     */
-
-    if (!id) {
-
-      try {
-
-        const topParams =
-          new URLSearchParams(
-            window.top.location.search
-          );
-
-        id =
-          topParams.get("id");
-
-      } catch (error) {
-
-        console.log(
-          "Impossible de lire window.top.location."
-        );
-
-      }
-
-    }
-
-
-    /*
-     * 3. Dernier secours :
-     *    utilisateur enregistré localement
+     * Si aucun ID dans l'URL,
+     * récupérer celui enregistré après connexion.
      */
 
     if (!id) {
@@ -1755,24 +1635,16 @@ function getUserIdFromUrl() {
       try {
 
         const savedUser =
-          localStorage.getItem(
-            "clerval_user"
-          );
+          localStorage.getItem("clerval_user");
 
         if (savedUser) {
 
           const user =
-            JSON.parse(
-              savedUser
-            );
+            JSON.parse(savedUser);
 
-          if (
-            user &&
-            user.id
-          ) {
+          if (user && user.id) {
 
-            id =
-              user.id;
+            id = user.id;
 
           }
 
@@ -1853,86 +1725,102 @@ if (!token) {
    CHARGER PROFIL
 ========================================================== */
 
-function loadProfile() {
+async function loadProfile() {
 
-  google.script.run
+  try {
 
-    .withSuccessHandler(
-      function(response) {
+    const response =
+      await fetch(API_URL, {
 
-        console.log(
-          "PROFIL :",
-          response
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
+
+        body: JSON.stringify({
+
+          action:
+            "getMyProfile",
+
+          token:
+            token
+
+        })
+
+      });
+
+
+    const result =
+      await response.json();
+
+
+    console.log(
+      "PROFIL :",
+      result
+    );
+
+
+    if (
+      !result ||
+      !result.success
+    ) {
+
+      showLoginRequired();
+
+      return;
+
+    }
+
+
+    /*
+     * Synchroniser l'utilisateur
+     * dans localStorage.
+     */
+
+    if (result.user) {
+
+      try {
+
+        localStorage.setItem(
+          "clerval_user",
+          JSON.stringify(
+            result.user
+          )
         );
 
-
-        if (
-          !response ||
-          !response.success
-        ) {
-
-          showLoginRequired();
-
-          return;
-
-        }
-
-
-        /*
-         * Synchroniser l'utilisateur
-         * dans localStorage
-         */
-
-        if (response.user) {
-
-          try {
-
-            localStorage.setItem(
-              "clerval_user",
-              JSON.stringify(
-                response.user
-              )
-            );
-
-          } catch (error) {
-
-            console.error(
-              "Erreur sauvegarde utilisateur :",
-              error
-            );
-
-          }
-
-        }
-
-
-        displayProfile(
-          response.user
-        );
-
-      }
-    )
-
-    .withFailureHandler(
-      function(error) {
+      } catch (error) {
 
         console.error(
-          "ERREUR PROFIL :",
+          "Erreur sauvegarde utilisateur :",
           error
         );
 
-
-        showMessage(
-          "Impossible de charger votre compte.",
-          "error"
-        );
-
       }
-    )
 
-    .getMyProfile(
-      token
+    }
+
+
+    displayProfile(
+      result.user
     );
+
+
+  } catch (error) {
+
+    console.error(
+      "ERREUR PROFIL :",
+      error
+    );
+
+
+    showMessage(
+      "Impossible de charger votre compte.",
+      "error"
+    );
+
+  }
 
 }
 
@@ -1964,101 +1852,171 @@ function displayProfile(user) {
       .toUpperCase();
 
 
-  document.getElementById(
-    "avatar"
-  ).textContent =
-    firstLetter || "?";
+  const avatar =
+    document.getElementById("avatar");
+
+  if (avatar) {
+
+    avatar.textContent =
+      firstLetter || "?";
+
+  }
 
 
-  document.getElementById(
-    "profileName"
-  ).textContent =
-    name;
+  const profileName =
+    document.getElementById("profileName");
+
+  if (profileName) {
+
+    profileName.textContent =
+      name;
+
+  }
 
 
-  document.getElementById(
-    "profilePhone"
-  ).textContent =
-    user.phone ||
-    "Téléphone non renseigné";
+  const profilePhone =
+    document.getElementById("profilePhone");
+
+  if (profilePhone) {
+
+    profilePhone.textContent =
+      user.phone ||
+      "Téléphone non renseigné";
+
+  }
 
 
-  document.getElementById(
-    "profileStatus"
-  ).textContent =
-    user.status ||
-    "Actif";
+  const profileStatus =
+    document.getElementById("profileStatus");
+
+  if (profileStatus) {
+
+    profileStatus.textContent =
+      user.status ||
+      "Actif";
+
+  }
 
 
-  document.getElementById(
-    "infoId"
-  ).textContent =
-    user.id ||
-    currentUserId ||
-    "—";
+  const infoId =
+    document.getElementById("infoId");
+
+  if (infoId) {
+
+    infoId.textContent =
+      user.id ||
+      currentUserId ||
+      "—";
+
+  }
 
 
-  document.getElementById(
-    "infoName"
-  ).textContent =
-    name;
+  const infoName =
+    document.getElementById("infoName");
+
+  if (infoName) {
+
+    infoName.textContent =
+      name;
+
+  }
 
 
-  document.getElementById(
-    "infoPhone"
-  ).textContent =
-    user.phone ||
-    "Non renseigné";
+  const infoPhone =
+    document.getElementById("infoPhone");
+
+  if (infoPhone) {
+
+    infoPhone.textContent =
+      user.phone ||
+      "Non renseigné";
+
+  }
 
 
-  document.getElementById(
-    "infoEmail"
-  ).textContent =
-    user.email ||
-    "Non renseignée";
+  const infoEmail =
+    document.getElementById("infoEmail");
+
+  if (infoEmail) {
+
+    infoEmail.textContent =
+      user.email ||
+      "Non renseignée";
+
+  }
 
 
-  document.getElementById(
-    "infoStatus"
-  ).textContent =
-    user.status ||
-    "Actif";
+  const infoStatus =
+    document.getElementById("infoStatus");
+
+  if (infoStatus) {
+
+    infoStatus.textContent =
+      user.status ||
+      "Actif";
+
+  }
 
 
-  document.getElementById(
-    "editName"
-  ).value =
-    user.name || "";
+  const editName =
+    document.getElementById("editName");
+
+  if (editName) {
+
+    editName.value =
+      user.name || "";
+
+  }
 
 
-  document.getElementById(
-    "editPhone"
-  ).value =
-    user.phone || "";
+  const editPhone =
+    document.getElementById("editPhone");
+
+  if (editPhone) {
+
+    editPhone.value =
+      user.phone || "";
+
+  }
 
 
-  document.getElementById(
-    "editEmail"
-  ).value =
-    user.email || "";
+  const editEmail =
+    document.getElementById("editEmail");
+
+  if (editEmail) {
+
+    editEmail.value =
+      user.email || "";
+
+  }
 
 
-  document.getElementById(
-    "loading"
-  ).style.display =
-    "none";
+  const loading =
+    document.getElementById("loading");
+
+  if (loading) {
+
+    loading.style.display =
+      "none";
+
+  }
 
 
-  document.getElementById(
-    "account"
-  ).style.display =
-    "block";
+  const account =
+    document.getElementById("account");
+
+  if (account) {
+
+    account.style.display =
+      "block";
+
+  }
 
 }
 
 
 /* ==========================================================
-   NAVIGATION GÉNÉRALE
+   NAVIGATION GÉNÉRALE GITHUB
 ========================================================== */
 
 function navigateToPage(page) {
@@ -2090,12 +2048,73 @@ function navigateToPage(page) {
   }
 
 
-  const url =
-    APP_URL +
-    "?page=" +
-    encodeURIComponent(page) +
-    "&id=" +
-    encodeURIComponent(id);
+  /*
+   * IMPORTANT :
+   *
+   * Les pages sont maintenant sur GitHub Pages.
+   *
+   * On ne fait PLUS :
+   *
+   * APP_URL + "?page=..."
+   *
+   * On fait directement :
+   *
+   * wallet.html?id=...
+   * achtekod.html?id=...
+   * roulette.html?id=...
+   */
+
+  let url;
+
+
+  switch (page) {
+
+    case "wallet":
+
+      url =
+        "wallet.html?id=" +
+        encodeURIComponent(id);
+
+      break;
+
+
+    case "achtekod":
+
+      url =
+        "achtekod.html?id=" +
+        encodeURIComponent(id);
+
+      break;
+
+
+    case "roulette":
+
+      url =
+        "roulette.html?id=" +
+        encodeURIComponent(id);
+
+      break;
+
+
+    case "compte":
+
+      url =
+        "compte.html?id=" +
+        encodeURIComponent(id);
+
+      break;
+
+
+    default:
+
+      console.error(
+        "Page inconnue :",
+        page
+      );
+
+      return;
+
+  }
 
 
   console.log(
@@ -2104,7 +2123,7 @@ function navigateToPage(page) {
   );
 
 
-  window.top.location.href =
+  window.location.href =
     url;
 
 }
@@ -2155,22 +2174,36 @@ function openRoulette() {
 
 function openEditProfile() {
 
-  document.getElementById(
-    "profileModal"
-  ).classList.add(
-    "active"
-  );
+  const modal =
+    document.getElementById(
+      "profileModal"
+    );
+
+  if (modal) {
+
+    modal.classList.add(
+      "active"
+    );
+
+  }
 
 }
 
 
 function closeProfileModal() {
 
-  document.getElementById(
-    "profileModal"
-  ).classList.remove(
-    "active"
-  );
+  const modal =
+    document.getElementById(
+      "profileModal"
+    );
+
+  if (modal) {
+
+    modal.classList.remove(
+      "active"
+    );
+
+  }
 
 }
 
@@ -2179,7 +2212,7 @@ function closeProfileModal() {
    ENREGISTRER PROFIL
 ========================================================== */
 
-function saveProfile() {
+async function saveProfile() {
 
   const name =
     document.getElementById(
@@ -2221,99 +2254,132 @@ function saveProfile() {
   }
 
 
-  google.script.run
+  if (!token) {
 
-    .withSuccessHandler(
-      function(response) {
+    showLoginRequired();
 
-        console.log(
-          "UPDATE PROFIL :",
-          response
-        );
+    return;
+
+  }
 
 
-        if (
-          !response ||
-          !response.success
-        ) {
+  try {
 
-          showMessage(
-            response &&
-            response.message
-              ? response.message
-              : "Impossible de modifier le profil.",
-            "error"
-          );
+    const response =
+      await fetch(API_URL, {
 
-          return;
+        method: "POST",
 
-        }
+        headers: {
 
+          "Content-Type":
+            "text/plain;charset=utf-8"
 
-        closeProfileModal();
+        },
 
+        body: JSON.stringify({
 
-        displayProfile(
-          response.user
-        );
+          action:
+            "updateMyProfile",
 
+          token:
+            token,
 
-        try {
+          data: {
 
-          localStorage.setItem(
-            "clerval_user",
-            JSON.stringify(
-              response.user
-            )
-          );
+            name:
+              name,
 
-        } catch (error) {
+            phone:
+              phone,
 
-          console.error(
-            error
-          );
+            email:
+              email
 
-        }
+          }
+
+        })
+
+      });
 
 
-        showMessage(
-          "Votre profil a été mis à jour avec succès.",
-          "success"
-        );
-
-      }
-    )
-
-    .withFailureHandler(
-      function(error) {
-
-        console.error(
-          "ERREUR UPDATE PROFIL :",
-          error
-        );
+    const result =
+      await response.json();
 
 
-        showMessage(
-          "Une erreur est survenue.",
-          "error"
-        );
-
-      }
-    )
-
-    .updateMyProfile(
-      token,
-      {
-        name:
-          name,
-
-        phone:
-          phone,
-
-        email:
-          email
-      }
+    console.log(
+      "UPDATE PROFIL :",
+      result
     );
+
+
+    if (
+      !result ||
+      !result.success
+    ) {
+
+      showMessage(
+
+        result &&
+        result.message
+          ? result.message
+          : "Impossible de modifier le profil.",
+
+        "error"
+
+      );
+
+      return;
+
+    }
+
+
+    closeProfileModal();
+
+
+    displayProfile(
+      result.user
+    );
+
+
+    try {
+
+      localStorage.setItem(
+        "clerval_user",
+        JSON.stringify(
+          result.user
+        )
+      );
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+    }
+
+
+    showMessage(
+      "Votre profil a été mis à jour avec succès.",
+      "success"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "ERREUR UPDATE PROFIL :",
+      error
+    );
+
+
+    showMessage(
+      "Une erreur est survenue.",
+      "error"
+    );
+
+  }
 
 }
 
@@ -2324,22 +2390,36 @@ function saveProfile() {
 
 function openPasswordModal() {
 
-  document.getElementById(
-    "passwordModal"
-  ).classList.add(
-    "active"
-  );
+  const modal =
+    document.getElementById(
+      "passwordModal"
+    );
+
+  if (modal) {
+
+    modal.classList.add(
+      "active"
+    );
+
+  }
 
 }
 
 
 function closePasswordModal() {
 
-  document.getElementById(
-    "passwordModal"
-  ).classList.remove(
-    "active"
-  );
+  const modal =
+    document.getElementById(
+      "passwordModal"
+    );
+
+  if (modal) {
+
+    modal.classList.remove(
+      "active"
+    );
+
+  }
 
 }
 
@@ -2348,7 +2428,7 @@ function closePasswordModal() {
    ENREGISTRER MOT DE PASSE
 ========================================================== */
 
-function savePassword() {
+async function savePassword() {
 
   const current =
     document.getElementById(
@@ -2406,86 +2486,120 @@ function savePassword() {
   }
 
 
-  google.script.run
+  if (!token) {
 
-    .withSuccessHandler(
-      function(response) {
+    showLoginRequired();
 
-        console.log(
-          "CHANGEMENT MOT DE PASSE :",
-          response
-        );
+    return;
+
+  }
 
 
-        if (
-          !response ||
-          !response.success
-        ) {
+  try {
 
-          showMessage(
-            response &&
-            response.message
-              ? response.message
-              : "Impossible de modifier le mot de passe.",
-            "error"
-          );
+    const response =
+      await fetch(API_URL, {
 
-          return;
+        method: "POST",
 
-        }
+        headers: {
 
+          "Content-Type":
+            "text/plain;charset=utf-8"
 
-        document.getElementById(
-          "currentPassword"
-        ).value =
-          "";
+        },
 
+        body: JSON.stringify({
 
-        document.getElementById(
-          "newPassword"
-        ).value =
-          "";
+          action:
+            "changeMyPassword",
 
+          token:
+            token,
 
-        document.getElementById(
-          "confirmPassword"
-        ).value =
-          "";
+          currentPassword:
+            current,
+
+          newPassword:
+            newPassword
+
+        })
+
+      });
 
 
-        closePasswordModal();
+    const result =
+      await response.json();
 
 
-        showMessage(
-          "Votre mot de passe a été modifié avec succès.",
-          "success"
-        );
-
-      }
-    )
-
-    .withFailureHandler(
-      function(error) {
-
-        console.error(
-          "ERREUR MOT DE PASSE :",
-          error
-        );
-
-
-        showMessage(
-          "Une erreur est survenue.",
-          "error"
-        );
-
-      }
-    )
-
-    .changeMyPassword(
-      token,
-      current,
-      newPassword
+    console.log(
+      "CHANGEMENT MOT DE PASSE :",
+      result
     );
+
+
+    if (
+      !result ||
+      !result.success
+    ) {
+
+      showMessage(
+
+        result &&
+        result.message
+          ? result.message
+          : "Impossible de modifier le mot de passe.",
+
+        "error"
+
+      );
+
+      return;
+
+    }
+
+
+    document.getElementById(
+      "currentPassword"
+    ).value =
+      "";
+
+
+    document.getElementById(
+      "newPassword"
+    ).value =
+      "";
+
+
+    document.getElementById(
+      "confirmPassword"
+    ).value =
+      "";
+
+
+    closePasswordModal();
+
+
+    showMessage(
+      "Votre mot de passe a été modifié avec succès.",
+      "success"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "ERREUR MOT DE PASSE :",
+      error
+    );
+
+
+    showMessage(
+      "Une erreur est survenue.",
+      "error"
+    );
+
+  }
 
 }
 
@@ -2494,7 +2608,7 @@ function savePassword() {
    DÉCONNEXION
 ========================================================== */
 
-function logout() {
+async function logout() {
 
   if (
     !confirm(
@@ -2507,32 +2621,46 @@ function logout() {
   }
 
 
-  google.script.run
+  try {
 
-    .withSuccessHandler(
-      function() {
+    if (token) {
 
-        clearLocalSession();
+      await fetch(API_URL, {
 
-      }
-    )
+        method: "POST",
 
-    .withFailureHandler(
-      function(error) {
+        headers: {
 
-        console.error(
-          "ERREUR LOGOUT :",
-          error
-        );
+          "Content-Type":
+            "text/plain;charset=utf-8"
 
-        clearLocalSession();
+        },
 
-      }
-    )
+        body: JSON.stringify({
 
-    .logoutUser(
-      token
+          action:
+            "logoutUser",
+
+          token:
+            token
+
+        })
+
+      });
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "ERREUR LOGOUT :",
+      error
     );
+
+  }
+
+
+  clearLocalSession();
 
 }
 
@@ -2547,18 +2675,24 @@ function clearLocalSession() {
     "clerval_token"
   );
 
+
   localStorage.removeItem(
     "clerval_user"
   );
+
 
   localStorage.removeItem(
     "clerval_login_time"
   );
 
 
-  window.top.location.href =
-    APP_URL +
-    "?page=connexion";
+  /*
+   * Retour direct vers la page GitHub
+   * de connexion.
+   */
+
+  window.location.href =
+    "connexion.html";
 
 }
 
@@ -2569,27 +2703,34 @@ function clearLocalSession() {
 
 function showLoginRequired() {
 
-  document.getElementById(
-    "loading"
-  ).innerHTML =
+  const loading =
+    document.getElementById(
+      "loading"
+    );
 
-    `
-      <strong>
-        Session expirée
-      </strong>
 
-      <br><br>
+  if (loading) {
 
-      Veuillez vous reconnecter.
-    `;
+    loading.innerHTML =
+
+      `
+        <strong>
+          Session expirée
+        </strong>
+
+        <br><br>
+
+        Veuillez vous reconnecter.
+      `;
+
+  }
 
 
   setTimeout(
     function() {
 
-      window.top.location.href =
-        APP_URL +
-        "?page=connexion";
+      window.location.href =
+        "connexion.html";
 
     },
     1500
@@ -2613,6 +2754,15 @@ function showMessage(
     );
 
 
+  if (!element) {
+
+    alert(text);
+
+    return;
+
+  }
+
+
   element.textContent =
     text;
 
@@ -2634,7 +2784,6 @@ function showMessage(
 }
 
 </script>
-
 </body>
 
 </html>
