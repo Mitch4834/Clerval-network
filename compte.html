@@ -1,0 +1,2563 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+
+>
+
+<title>Mon compte - Clerval's Network</title>
+
+<style>
+
+/* ==========================================================
+   GLOBAL
+========================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+
+  --green: #729c12;
+  --green-dark: #5d800f;
+  --green-light: #f2f6e8;
+
+  --text: #222;
+  --gray: #777;
+  --border: #e5e5e5;
+
+  --danger: #d93025;
+
+  --white: #fff;
+  --background: #f6f8f2;
+
+}
+
+body {
+
+  margin: 0;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  background:
+    var(--background);
+
+  color:
+    var(--text);
+
+}
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.header {
+
+  height: 70px;
+
+  background:
+    var(--white);
+
+  border-bottom:
+    1px solid var(--border);
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  padding:
+    0 30px;
+
+}
+
+.brand {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    12px;
+
+}
+
+.logo {
+
+  width:
+    45px;
+
+  height:
+    45px;
+
+  object-fit:
+    contain;
+
+}
+
+.brand-name {
+
+  color:
+    var(--green);
+
+  font-weight:
+    800;
+
+  font-size:
+    18px;
+
+}
+
+.brand-subtitle {
+
+  color:
+    var(--gray);
+
+  font-size:
+    12px;
+
+  margin-top:
+    3px;
+
+}
+
+.logout {
+
+  border:
+    none;
+
+  background:
+    transparent;
+
+  color:
+    var(--danger);
+
+  font-weight:
+    bold;
+
+  cursor:
+    pointer;
+
+}
+
+
+/* ==========================================================
+   CONTAINER
+========================================================== */
+
+.container {
+
+  width:
+    100%;
+
+  max-width:
+    1050px;
+
+  margin:
+    35px auto;
+
+  padding:
+    0 20px;
+
+}
+
+
+/* ==========================================================
+   TITRE
+========================================================== */
+
+.page-title {
+
+  margin-bottom:
+    25px;
+
+}
+
+.page-title h1 {
+
+  margin:
+    0;
+
+  font-size:
+    30px;
+
+}
+
+.page-title p {
+
+  margin-top:
+    8px;
+
+  color:
+    var(--gray);
+
+}
+
+
+/* ==========================================================
+   PROFIL
+========================================================== */
+
+.profile {
+
+  background:
+    var(--white);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    20px;
+
+  padding:
+    25px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    20px;
+
+  margin-bottom:
+    25px;
+
+}
+
+.avatar {
+
+  width:
+    80px;
+
+  height:
+    80px;
+
+  border-radius:
+    50%;
+
+  background:
+    var(--green-light);
+
+  color:
+    var(--green);
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  font-size:
+    30px;
+
+  font-weight:
+    bold;
+
+}
+
+.profile h2 {
+
+  margin:
+    0;
+
+  font-size:
+    23px;
+
+}
+
+.phone {
+
+  color:
+    var(--gray);
+
+  margin-top:
+    6px;
+
+}
+
+.status {
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    7px;
+
+  margin-top:
+    10px;
+
+  padding:
+    6px 12px;
+
+  background:
+    var(--green-light);
+
+  color:
+    var(--green-dark);
+
+  border-radius:
+    30px;
+
+  font-size:
+    12px;
+
+  font-weight:
+    bold;
+
+}
+
+.status-dot {
+
+  width:
+    8px;
+
+  height:
+    8px;
+
+  border-radius:
+    50%;
+
+  background:
+    var(--green);
+
+}
+
+
+/* ==========================================================
+   ACTIONS
+========================================================== */
+
+.main-actions {
+
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap:
+    18px;
+
+  margin-bottom:
+    25px;
+
+}
+
+.main-action {
+
+  background:
+    var(--white);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    18px;
+
+  padding:
+    25px 18px;
+
+  cursor:
+    pointer;
+
+  text-align:
+    center;
+
+  transition:
+    0.2s;
+
+}
+
+.main-action:hover {
+
+  transform:
+    translateY(-4px);
+
+  border-color:
+    var(--green);
+
+  box-shadow:
+    0 10px 25px rgba(
+      0,
+      0,
+      0,
+      0.08
+    );
+
+}
+
+.action-icon {
+
+  width:
+    60px;
+
+  height:
+    60px;
+
+  border-radius:
+    50%;
+
+  background:
+    var(--green-light);
+
+  color:
+    var(--green);
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  margin:
+    0 auto 12px;
+
+  font-size:
+    27px;
+
+}
+
+.action-title {
+
+  font-size:
+    18px;
+
+  font-weight:
+    bold;
+
+}
+
+.action-description {
+
+  margin-top:
+    6px;
+
+  color:
+    var(--gray);
+
+  font-size:
+    12px;
+
+}
+
+
+/* ==========================================================
+   GRID
+========================================================== */
+
+.grid {
+
+  display:
+    grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:
+    20px;
+
+}
+
+
+/* ==========================================================
+   CARD
+========================================================== */
+
+.card {
+
+  background:
+    var(--white);
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    18px;
+
+  padding:
+    25px;
+
+}
+
+.card h3 {
+
+  margin:
+    0 0 20px;
+
+}
+
+
+/* ==========================================================
+   INFORMATIONS
+========================================================== */
+
+.info {
+
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  gap:
+    15px;
+
+  padding:
+    14px 0;
+
+  border-bottom:
+    1px solid #f0f0f0;
+
+}
+
+.info:last-child {
+
+  border-bottom:
+    none;
+
+}
+
+.info-label {
+
+  color:
+    var(--gray);
+
+  font-size:
+    13px;
+
+}
+
+.info-value {
+
+  font-weight:
+    bold;
+
+  font-size:
+    14px;
+
+  text-align:
+    right;
+
+  word-break:
+    break-word;
+
+}
+
+
+/* ==========================================================
+   BOUTONS SECONDAIRES
+========================================================== */
+
+.secondary-button {
+
+  width:
+    100%;
+
+  padding:
+    14px;
+
+  margin-bottom:
+    10px;
+
+  background:
+    white;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    10px;
+
+  text-align:
+    left;
+
+  cursor:
+    pointer;
+
+}
+
+.secondary-button:hover {
+
+  background:
+    var(--green-light);
+
+  border-color:
+    var(--green);
+
+}
+
+.secondary-button strong {
+
+  display:
+    block;
+
+}
+
+.secondary-button span {
+
+  display:
+    block;
+
+  margin-top:
+    4px;
+
+  color:
+    var(--gray);
+
+  font-size:
+    12px;
+
+}
+
+
+/* ==========================================================
+   MODAL
+========================================================== */
+
+.modal {
+
+  display:
+    none;
+
+  position:
+    fixed;
+
+  inset:
+    0;
+
+  background:
+    rgba(
+      0,
+      0,
+      0,
+      0.45
+    );
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  padding:
+    20px;
+
+  z-index:
+    1000;
+
+}
+
+.modal.active {
+
+  display:
+    flex;
+
+}
+
+.modal-box {
+
+  width:
+    100%;
+
+  max-width:
+    450px;
+
+  background:
+    white;
+
+  border-radius:
+    18px;
+
+  padding:
+    25px;
+
+}
+
+.modal-box h2 {
+
+  margin-top:
+    0;
+
+}
+
+.input-group {
+
+  margin-bottom:
+    15px;
+
+}
+
+.input-group label {
+
+  display:
+    block;
+
+  margin-bottom:
+    7px;
+
+  font-size:
+    13px;
+
+  font-weight:
+    bold;
+
+}
+
+.input-group input {
+
+  width:
+    100%;
+
+  padding:
+    13px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    9px;
+
+  outline:
+    none;
+
+}
+
+.input-group input:focus {
+
+  border-color:
+    var(--green);
+
+}
+
+.modal-actions {
+
+  display:
+    flex;
+
+  gap:
+    10px;
+
+  margin-top:
+    20px;
+
+}
+
+.modal-actions button {
+
+  flex:
+    1;
+
+  padding:
+    13px;
+
+  border-radius:
+    9px;
+
+  cursor:
+    pointer;
+
+  border:
+    none;
+
+}
+
+.cancel {
+
+  background:
+    #eee;
+
+}
+
+.confirm {
+
+  background:
+    var(--green);
+
+  color:
+    white;
+
+  font-weight:
+    bold;
+
+}
+
+
+/* ==========================================================
+   LOADING
+========================================================== */
+
+.loading {
+
+  text-align:
+    center;
+
+  padding:
+    100px 20px;
+
+  color:
+    var(--gray);
+
+}
+
+.spinner {
+
+  width:
+    35px;
+
+  height:
+    35px;
+
+  border:
+    4px solid #e5ebd7;
+
+  border-top-color:
+    var(--green);
+
+  border-radius:
+    50%;
+
+  margin:
+    0 auto 15px;
+
+  animation:
+    spin 0.8s linear infinite;
+
+}
+
+@keyframes spin {
+
+  to {
+
+    transform:
+      rotate(360deg);
+
+  }
+
+}
+
+
+/* ==========================================================
+   MESSAGE
+========================================================== */
+
+.message {
+
+  display:
+    none;
+
+  padding:
+    13px;
+
+  border-radius:
+    10px;
+
+  margin-bottom:
+    20px;
+
+  font-size:
+    14px;
+
+}
+
+.message.success {
+
+  display:
+    block;
+
+  background:
+    #edf7df;
+
+  color:
+    var(--green-dark);
+
+}
+
+.message.error {
+
+  display:
+    block;
+
+  background:
+    #fff0ef;
+
+  color:
+    var(--danger);
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (
+  max-width: 700px
+) {
+
+  .header {
+
+    padding:
+      0 15px;
+
+  }
+
+  .container {
+
+    padding:
+      0 15px;
+
+    margin-top:
+      25px;
+
+  }
+
+  .page-title h1 {
+
+    font-size:
+      25px;
+
+  }
+
+  .profile {
+
+    padding:
+      20px;
+
+  }
+
+  .avatar {
+
+    width:
+      65px;
+
+    height:
+      65px;
+
+    font-size:
+      24px;
+
+  }
+
+  .main-actions {
+
+    grid-template-columns:
+      1fr;
+
+  }
+
+  .main-action {
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    text-align:
+      left;
+
+    gap:
+      15px;
+
+  }
+
+  .action-icon {
+
+    margin:
+      0;
+
+    flex-shrink:
+      0;
+
+  }
+
+  .grid {
+
+    grid-template-columns:
+      1fr;
+
+  }
+
+  .info {
+
+    flex-direction:
+      column;
+
+    gap:
+      5px;
+
+  }
+
+  .info-value {
+
+    text-align:
+      left;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- ========================================================
+     HEADER
+========================================================= -->
+
+<header class="header">
+
+  <div class="brand">
+
+```
+<img
+  src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdkbmTZN-xZ5NCw8LmJmvBK9POVHchnenaGY-HNl9v-zfSHui2iDxA4oQJahyjomIIrrF1ivfXnup0AJbsDVRFzLn97qzK_3XUlYMHwHBbCuUr72m0D1QoRI1M7eVJa92BYIG2W-S9rnln4f8v0Y2wBB-F6HBAH99RGyx7mOHGQAhwGk_w_y1y_xPGBOA/s325/WhatsApp%20Image%202026-09-07%20at%2000.06.07%20(1).jpeg"
+  class="logo"
+  alt="Clerval's Network"
+>
+
+<div>
+
+  <div class="brand-name">
+    CLERVAL'S NETWORK
+  </div>
+
+  <div class="brand-subtitle">
+    Votre espace personnel
+  </div>
+
+</div>
+```
+
+  </div>
+
+<button
+class="logout"
+onclick="logout()"
+
+>
+
+```
+Déconnexion
+```
+
+  </button>
+
+</header>
+
+<!-- ========================================================
+     CONTENU
+========================================================= -->
+
+<main class="container">
+
+  <!-- LOADING -->
+
+  <div
+    id="loading"
+    class="loading"
+  >
+
+```
+<div class="spinner"></div>
+
+Chargement de votre compte...
+```
+
+  </div>
+
+  <!-- COMPTE -->
+
+  <div
+    id="account"
+    style="display:none;"
+  >
+
+```
+<div class="page-title">
+
+  <h1>
+    Mon compte
+  </h1>
+
+  <p>
+    Bienvenue dans votre espace personnel Clerval's Network.
+  </p>
+
+</div>
+
+
+<div
+  id="message"
+  class="message"
+></div>
+
+
+<!-- PROFIL -->
+
+<div class="profile">
+
+  <div
+    id="avatar"
+    class="avatar"
+  >
+    ?
+  </div>
+
+
+  <div>
+
+    <h2 id="profileName">
+      —
+    </h2>
+
+    <div
+      id="profilePhone"
+      class="phone"
+    >
+      —
+    </div>
+
+
+    <div class="status">
+
+      <span class="status-dot"></span>
+
+      <span id="profileStatus">
+        Actif
+      </span>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ====================================================
+     ACTIONS PRINCIPALES
+===================================================== -->
+
+<div class="main-actions">
+
+
+  <!-- WALLET -->
+
+  <button
+    class="main-action"
+    onclick="openWallet()"
+  >
+
+    <div class="action-icon">
+      💰
+    </div>
+
+    <div>
+
+      <div class="action-title">
+        WALLET
+      </div>
+
+      <div class="action-description">
+        Votre portefeuille électronique
+      </div>
+
+    </div>
+
+  </button>
+
+
+  <!-- ACHTE KOD -->
+
+  <button
+    class="main-action"
+    onclick="openBuyCode()"
+  >
+
+    <div class="action-icon">
+      📶
+    </div>
+
+    <div>
+
+      <div class="action-title">
+        ACHTE KOD
+      </div>
+
+      <div class="action-description">
+        Acheter un code Internet
+      </div>
+
+    </div>
+
+  </button>
+
+
+  <!-- ROULETTE -->
+
+  <button
+    class="main-action"
+    onclick="openRoulette()"
+  >
+
+    <div class="action-icon">
+      🎰
+    </div>
+
+    <div>
+
+      <div class="action-title">
+        ROULETTE
+      </div>
+
+      <div class="action-description">
+        Accéder à la roulette
+      </div>
+
+    </div>
+
+  </button>
+
+
+</div>
+
+
+<!-- ====================================================
+     INFORMATIONS + GESTION
+===================================================== -->
+
+<div class="grid">
+
+
+  <!-- INFORMATIONS -->
+
+  <div class="card">
+
+    <h3>
+      Mes informations
+    </h3>
+
+
+    <div class="info">
+
+      <div class="info-label">
+        Identifiant
+      </div>
+
+      <div
+        id="infoId"
+        class="info-value"
+      >
+        —
+      </div>
+
+    </div>
+
+
+    <div class="info">
+
+      <div class="info-label">
+        Nom complet
+      </div>
+
+      <div
+        id="infoName"
+        class="info-value"
+      >
+        —
+      </div>
+
+    </div>
+
+
+    <div class="info">
+
+      <div class="info-label">
+        Téléphone
+      </div>
+
+      <div
+        id="infoPhone"
+        class="info-value"
+      >
+        —
+      </div>
+
+    </div>
+
+
+    <div class="info">
+
+      <div class="info-label">
+        E-mail
+      </div>
+
+      <div
+        id="infoEmail"
+        class="info-value"
+      >
+        Non renseignée
+      </div>
+
+    </div>
+
+
+    <div class="info">
+
+      <div class="info-label">
+        Statut
+      </div>
+
+      <div
+        id="infoStatus"
+        class="info-value"
+      >
+        Actif
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- GESTION -->
+
+  <div class="card">
+
+    <h3>
+      Gestion du compte
+    </h3>
+
+
+    <button
+      class="secondary-button"
+      onclick="openEditProfile()"
+    >
+
+      <strong>
+        ✏️ Modifier mon profil
+      </strong>
+
+      <span>
+        Modifier votre nom, téléphone ou e-mail.
+      </span>
+
+    </button>
+
+
+    <button
+      class="secondary-button"
+      onclick="openPasswordModal()"
+    >
+
+      <strong>
+        🔐 Modifier mon mot de passe
+      </strong>
+
+      <span>
+        Modifier le mot de passe de votre compte.
+      </span>
+
+    </button>
+
+
+    <button
+      class="secondary-button"
+      onclick="logout()"
+    >
+
+      <strong>
+        🚪 Déconnexion
+      </strong>
+
+      <span>
+        Fermer votre session.
+      </span>
+
+    </button>
+
+  </div>
+
+
+</div>
+```
+
+  </div>
+
+</main>
+
+<!-- ========================================================
+     MODAL PROFIL
+========================================================= -->
+
+<div
+  id="profileModal"
+  class="modal"
+>
+
+  <div class="modal-box">
+
+```
+<h2>
+  Modifier mon profil
+</h2>
+
+
+<div class="input-group">
+
+  <label>
+    Nom complet
+  </label>
+
+  <input
+    id="editName"
+    type="text"
+    placeholder="Votre nom complet"
+  >
+
+</div>
+
+
+<div class="input-group">
+
+  <label>
+    Téléphone
+  </label>
+
+  <input
+    id="editPhone"
+    type="text"
+    placeholder="+509..."
+  >
+
+</div>
+
+
+<div class="input-group">
+
+  <label>
+    E-mail
+  </label>
+
+  <input
+    id="editEmail"
+    type="email"
+    placeholder="votre@email.com"
+  >
+
+</div>
+
+
+<div class="modal-actions">
+
+  <button
+    class="cancel"
+    onclick="closeProfileModal()"
+  >
+    Annuler
+  </button>
+
+  <button
+    class="confirm"
+    onclick="saveProfile()"
+  >
+    Enregistrer
+  </button>
+
+</div>
+```
+
+  </div>
+
+</div>
+
+<!-- ========================================================
+     MODAL MOT DE PASSE
+========================================================= -->
+
+<div
+  id="passwordModal"
+  class="modal"
+>
+
+  <div class="modal-box">
+
+```
+<h2>
+  Modifier le mot de passe
+</h2>
+
+
+<div class="input-group">
+
+  <label>
+    Mot de passe actuel
+  </label>
+
+  <input
+    id="currentPassword"
+    type="password"
+    placeholder="Mot de passe actuel"
+  >
+
+</div>
+
+
+<div class="input-group">
+
+  <label>
+    Nouveau mot de passe
+  </label>
+
+  <input
+    id="newPassword"
+    type="password"
+    placeholder="Minimum 6 caractères"
+  >
+
+</div>
+
+
+<div class="input-group">
+
+  <label>
+    Confirmer le nouveau mot de passe
+  </label>
+
+  <input
+    id="confirmPassword"
+    type="password"
+    placeholder="Confirmer"
+  >
+
+</div>
+
+
+<div class="modal-actions">
+
+  <button
+    class="cancel"
+    onclick="closePasswordModal()"
+  >
+    Annuler
+  </button>
+
+  <button
+    class="confirm"
+    onclick="savePassword()"
+  >
+    Modifier
+  </button>
+
+</div>
+```
+
+  </div>
+
+</div>
+
+<script>
+
+/* ==========================================================
+   CONFIGURATION
+========================================================== */
+
+const APP_URL =
+  "https://script.google.com/macros/s/AKfycbwncLkGYZyyf6kOxc9u9XpRiRgjLIn88zD7Jc7kzlwIl82WDVjyTBNQFnM9IDX9852e/exec";
+
+
+/* ==========================================================
+   TOKEN SESSION
+========================================================== */
+
+const token =
+  localStorage.getItem(
+    "clerval_token"
+  );
+
+
+/* ==========================================================
+   UTILITAIRE — RÉCUPÉRER ID UTILISATEUR
+========================================================== */
+
+function getUserIdFromUrl() {
+
+  try {
+
+    let id = null;
+
+
+    /*
+     * 1. URL de la page actuelle
+     */
+
+    try {
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+      id =
+        params.get("id");
+
+    } catch (error) {
+
+      console.log(
+        "Impossible de lire l'URL actuelle."
+      );
+
+    }
+
+
+    /*
+     * 2. URL principale
+     */
+
+    if (!id) {
+
+      try {
+
+        const topParams =
+          new URLSearchParams(
+            window.top.location.search
+          );
+
+        id =
+          topParams.get("id");
+
+      } catch (error) {
+
+        console.log(
+          "Impossible de lire window.top.location."
+        );
+
+      }
+
+    }
+
+
+    /*
+     * 3. Dernier secours :
+     *    utilisateur enregistré localement
+     */
+
+    if (!id) {
+
+      try {
+
+        const savedUser =
+          localStorage.getItem(
+            "clerval_user"
+          );
+
+        if (savedUser) {
+
+          const user =
+            JSON.parse(
+              savedUser
+            );
+
+          if (
+            user &&
+            user.id
+          ) {
+
+            id =
+              user.id;
+
+          }
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Erreur localStorage :",
+          error
+        );
+
+      }
+
+    }
+
+
+    if (id) {
+
+      id =
+        String(id).trim();
+
+    }
+
+
+    console.log(
+      "ID UTILISATEUR :",
+      id
+    );
+
+
+    return id || null;
+
+  } catch (error) {
+
+    console.error(
+      "ERREUR RÉCUPÉRATION ID :",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+
+/* ==========================================================
+   ID ACTUEL
+========================================================== */
+
+const currentUserId =
+  getUserIdFromUrl();
+
+
+console.log(
+  "CURRENT USER ID :",
+  currentUserId
+);
+
+
+/* ==========================================================
+   INITIALISATION
+========================================================== */
+
+if (!token) {
+
+  showLoginRequired();
+
+} else {
+
+  loadProfile();
+
+}
+
+
+/* ==========================================================
+   CHARGER PROFIL
+========================================================== */
+
+function loadProfile() {
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(response) {
+
+        console.log(
+          "PROFIL :",
+          response
+        );
+
+
+        if (
+          !response ||
+          !response.success
+        ) {
+
+          showLoginRequired();
+
+          return;
+
+        }
+
+
+        /*
+         * Synchroniser l'utilisateur
+         * dans localStorage
+         */
+
+        if (response.user) {
+
+          try {
+
+            localStorage.setItem(
+              "clerval_user",
+              JSON.stringify(
+                response.user
+              )
+            );
+
+          } catch (error) {
+
+            console.error(
+              "Erreur sauvegarde utilisateur :",
+              error
+            );
+
+          }
+
+        }
+
+
+        displayProfile(
+          response.user
+        );
+
+      }
+    )
+
+    .withFailureHandler(
+      function(error) {
+
+        console.error(
+          "ERREUR PROFIL :",
+          error
+        );
+
+
+        showMessage(
+          "Impossible de charger votre compte.",
+          "error"
+        );
+
+      }
+    )
+
+    .getMyProfile(
+      token
+    );
+
+}
+
+
+/* ==========================================================
+   AFFICHER PROFIL
+========================================================== */
+
+function displayProfile(user) {
+
+  if (!user) {
+
+    showLoginRequired();
+
+    return;
+
+  }
+
+
+  const name =
+    user.name ||
+    "Utilisateur";
+
+
+  const firstLetter =
+    name
+      .trim()
+      .charAt(0)
+      .toUpperCase();
+
+
+  document.getElementById(
+    "avatar"
+  ).textContent =
+    firstLetter || "?";
+
+
+  document.getElementById(
+    "profileName"
+  ).textContent =
+    name;
+
+
+  document.getElementById(
+    "profilePhone"
+  ).textContent =
+    user.phone ||
+    "Téléphone non renseigné";
+
+
+  document.getElementById(
+    "profileStatus"
+  ).textContent =
+    user.status ||
+    "Actif";
+
+
+  document.getElementById(
+    "infoId"
+  ).textContent =
+    user.id ||
+    currentUserId ||
+    "—";
+
+
+  document.getElementById(
+    "infoName"
+  ).textContent =
+    name;
+
+
+  document.getElementById(
+    "infoPhone"
+  ).textContent =
+    user.phone ||
+    "Non renseigné";
+
+
+  document.getElementById(
+    "infoEmail"
+  ).textContent =
+    user.email ||
+    "Non renseignée";
+
+
+  document.getElementById(
+    "infoStatus"
+  ).textContent =
+    user.status ||
+    "Actif";
+
+
+  document.getElementById(
+    "editName"
+  ).value =
+    user.name || "";
+
+
+  document.getElementById(
+    "editPhone"
+  ).value =
+    user.phone || "";
+
+
+  document.getElementById(
+    "editEmail"
+  ).value =
+    user.email || "";
+
+
+  document.getElementById(
+    "loading"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "account"
+  ).style.display =
+    "block";
+
+}
+
+
+/* ==========================================================
+   NAVIGATION GÉNÉRALE
+========================================================== */
+
+function navigateToPage(page) {
+
+  const id =
+    getUserIdFromUrl();
+
+
+  console.log(
+    "NAVIGATION DEMANDÉE :",
+    page
+  );
+
+
+  console.log(
+    "ID POUR NAVIGATION :",
+    id
+  );
+
+
+  if (!id) {
+
+    alert(
+      "Identifiant utilisateur introuvable."
+    );
+
+    return;
+
+  }
+
+
+  const url =
+    APP_URL +
+    "?page=" +
+    encodeURIComponent(page) +
+    "&id=" +
+    encodeURIComponent(id);
+
+
+  console.log(
+    "URL DE NAVIGATION :",
+    url
+  );
+
+
+  window.top.location.href =
+    url;
+
+}
+
+
+/* ==========================================================
+   WALLET
+========================================================== */
+
+function openWallet() {
+
+  navigateToPage(
+    "wallet"
+  );
+
+}
+
+
+/* ==========================================================
+   ACHTE KOD
+========================================================== */
+
+function openBuyCode() {
+
+  navigateToPage(
+    "achtekod"
+  );
+
+}
+
+
+/* ==========================================================
+   ROULETTE
+========================================================== */
+
+function openRoulette() {
+
+  navigateToPage(
+    "roulette"
+  );
+
+}
+
+
+/* ==========================================================
+   MODIFIER PROFIL
+========================================================== */
+
+function openEditProfile() {
+
+  document.getElementById(
+    "profileModal"
+  ).classList.add(
+    "active"
+  );
+
+}
+
+
+function closeProfileModal() {
+
+  document.getElementById(
+    "profileModal"
+  ).classList.remove(
+    "active"
+  );
+
+}
+
+
+/* ==========================================================
+   ENREGISTRER PROFIL
+========================================================== */
+
+function saveProfile() {
+
+  const name =
+    document.getElementById(
+      "editName"
+    ).value.trim();
+
+
+  const phone =
+    document.getElementById(
+      "editPhone"
+    ).value.trim();
+
+
+  const email =
+    document.getElementById(
+      "editEmail"
+    ).value.trim();
+
+
+  if (!name) {
+
+    alert(
+      "Veuillez entrer votre nom."
+    );
+
+    return;
+
+  }
+
+
+  if (!phone) {
+
+    alert(
+      "Veuillez entrer votre numéro de téléphone."
+    );
+
+    return;
+
+  }
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(response) {
+
+        console.log(
+          "UPDATE PROFIL :",
+          response
+        );
+
+
+        if (
+          !response ||
+          !response.success
+        ) {
+
+          showMessage(
+            response &&
+            response.message
+              ? response.message
+              : "Impossible de modifier le profil.",
+            "error"
+          );
+
+          return;
+
+        }
+
+
+        closeProfileModal();
+
+
+        displayProfile(
+          response.user
+        );
+
+
+        try {
+
+          localStorage.setItem(
+            "clerval_user",
+            JSON.stringify(
+              response.user
+            )
+          );
+
+        } catch (error) {
+
+          console.error(
+            error
+          );
+
+        }
+
+
+        showMessage(
+          "Votre profil a été mis à jour avec succès.",
+          "success"
+        );
+
+      }
+    )
+
+    .withFailureHandler(
+      function(error) {
+
+        console.error(
+          "ERREUR UPDATE PROFIL :",
+          error
+        );
+
+
+        showMessage(
+          "Une erreur est survenue.",
+          "error"
+        );
+
+      }
+    )
+
+    .updateMyProfile(
+      token,
+      {
+        name:
+          name,
+
+        phone:
+          phone,
+
+        email:
+          email
+      }
+    );
+
+}
+
+
+/* ==========================================================
+   MODAL MOT DE PASSE
+========================================================== */
+
+function openPasswordModal() {
+
+  document.getElementById(
+    "passwordModal"
+  ).classList.add(
+    "active"
+  );
+
+}
+
+
+function closePasswordModal() {
+
+  document.getElementById(
+    "passwordModal"
+  ).classList.remove(
+    "active"
+  );
+
+}
+
+
+/* ==========================================================
+   ENREGISTRER MOT DE PASSE
+========================================================== */
+
+function savePassword() {
+
+  const current =
+    document.getElementById(
+      "currentPassword"
+    ).value;
+
+
+  const newPassword =
+    document.getElementById(
+      "newPassword"
+    ).value;
+
+
+  const confirmation =
+    document.getElementById(
+      "confirmPassword"
+    ).value;
+
+
+  if (!current) {
+
+    alert(
+      "Entrez votre mot de passe actuel."
+    );
+
+    return;
+
+  }
+
+
+  if (
+    newPassword.length < 6
+  ) {
+
+    alert(
+      "Le nouveau mot de passe doit contenir au moins 6 caractères."
+    );
+
+    return;
+
+  }
+
+
+  if (
+    newPassword !==
+    confirmation
+  ) {
+
+    alert(
+      "Les deux nouveaux mots de passe ne correspondent pas."
+    );
+
+    return;
+
+  }
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(response) {
+
+        console.log(
+          "CHANGEMENT MOT DE PASSE :",
+          response
+        );
+
+
+        if (
+          !response ||
+          !response.success
+        ) {
+
+          showMessage(
+            response &&
+            response.message
+              ? response.message
+              : "Impossible de modifier le mot de passe.",
+            "error"
+          );
+
+          return;
+
+        }
+
+
+        document.getElementById(
+          "currentPassword"
+        ).value =
+          "";
+
+
+        document.getElementById(
+          "newPassword"
+        ).value =
+          "";
+
+
+        document.getElementById(
+          "confirmPassword"
+        ).value =
+          "";
+
+
+        closePasswordModal();
+
+
+        showMessage(
+          "Votre mot de passe a été modifié avec succès.",
+          "success"
+        );
+
+      }
+    )
+
+    .withFailureHandler(
+      function(error) {
+
+        console.error(
+          "ERREUR MOT DE PASSE :",
+          error
+        );
+
+
+        showMessage(
+          "Une erreur est survenue.",
+          "error"
+        );
+
+      }
+    )
+
+    .changeMyPassword(
+      token,
+      current,
+      newPassword
+    );
+
+}
+
+
+/* ==========================================================
+   DÉCONNEXION
+========================================================== */
+
+function logout() {
+
+  if (
+    !confirm(
+      "Voulez-vous vraiment vous déconnecter ?"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function() {
+
+        clearLocalSession();
+
+      }
+    )
+
+    .withFailureHandler(
+      function(error) {
+
+        console.error(
+          "ERREUR LOGOUT :",
+          error
+        );
+
+        clearLocalSession();
+
+      }
+    )
+
+    .logoutUser(
+      token
+    );
+
+}
+
+
+/* ==========================================================
+   SUPPRIMER SESSION LOCALE
+========================================================== */
+
+function clearLocalSession() {
+
+  localStorage.removeItem(
+    "clerval_token"
+  );
+
+  localStorage.removeItem(
+    "clerval_user"
+  );
+
+  localStorage.removeItem(
+    "clerval_login_time"
+  );
+
+
+  window.top.location.href =
+    APP_URL +
+    "?page=connexion";
+
+}
+
+
+/* ==========================================================
+   SESSION ABSENTE
+========================================================== */
+
+function showLoginRequired() {
+
+  document.getElementById(
+    "loading"
+  ).innerHTML =
+
+    `
+      <strong>
+        Session expirée
+      </strong>
+
+      <br><br>
+
+      Veuillez vous reconnecter.
+    `;
+
+
+  setTimeout(
+    function() {
+
+      window.top.location.href =
+        APP_URL +
+        "?page=connexion";
+
+    },
+    1500
+  );
+
+}
+
+
+/* ==========================================================
+   MESSAGE
+========================================================== */
+
+function showMessage(
+  text,
+  type
+) {
+
+  const element =
+    document.getElementById(
+      "message"
+    );
+
+
+  element.textContent =
+    text;
+
+
+  element.className =
+    "message " + type;
+
+
+  setTimeout(
+    function() {
+
+      element.className =
+        "message";
+
+    },
+    4000
+  );
+
+}
+
+</script>
+
+</body>
+
+</html>
