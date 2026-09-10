@@ -1,0 +1,1608 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="expires" content="-1">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0">
+
+<title>Clerval's Network</title>
+
+
+<!-- =====================================================
+     MIKROTIK CHAP
+====================================================== -->
+
+<!--$(if chap-id)-->
+
+<form name="sendin"
+      action="$(link-login-only)"
+      method="post"
+      style="display:none">
+
+    <input type="hidden"
+           name="username">
+
+    <input type="hidden"
+           name="password">
+
+    <input type="hidden"
+           name="dst"
+           value="$(link-orig)">
+
+    <input type="hidden"
+           name="popup"
+           value="true">
+
+</form>
+
+
+<script src="/md5.js"></script>
+
+
+<script>
+
+function doLogin() {
+
+    document.sendin.username.value =
+        document.login.username.value;
+
+    document.sendin.password.value =
+        hexMD5(
+            '$(chap-id)' +
+            document.login.password.value +
+            '$(chap-challenge)'
+        );
+
+    document.sendin.submit();
+
+    return false;
+}
+
+</script>
+
+<!--$(endif)-->
+
+
+<!-- =====================================================
+     LOGAPAY
+====================================================== -->
+
+<script>
+
+/* ==========================================================
+   CONFIGURATION LOGAPAY
+========================================================== */
+
+const LOGAPAY_API_URL =
+"https://script.google.com/macros/s/AKfycbxqCIF5y67QiBrolRCvVsjL2FiJEJMqswNelyd_kTCeBO2GuMUoARawvmS9T0h9t6da_A/exec";
+
+
+/* ==========================================================
+   MONTANT FIXE DU CODE
+========================================================== */
+
+const CODE_AMOUNT = 50;
+
+
+/* ==========================================================
+   OUVRIR LE MODAL
+========================================================== */
+
+function openBuyModal() {
+
+    const modal =
+        document.getElementById("buyModal");
+
+    if (!modal) {
+        console.error("Modal achat introuvable.");
+        return;
+    }
+
+    modal.style.display = "flex";
+
+    const msg =
+        document.getElementById("paymentMsg");
+
+    if (msg) {
+        msg.innerHTML = "";
+    }
+
+    enablePaymentButtons();
+}
+
+
+/* ==========================================================
+   FERMER LE MODAL
+========================================================== */
+
+function closeBuyModal(event) {
+
+    /*
+       Si on clique à l'intérieur
+       du contenu du modal,
+       on ne ferme pas.
+    */
+
+    if (
+        event &&
+        event.target &&
+        event.target.id !== "buyModal"
+    ) {
+        return;
+    }
+
+    const modal =
+        document.getElementById("buyModal");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+
+/* ==========================================================
+   REACTIVER LES BOUTONS
+========================================================== */
+
+function enablePaymentButtons() {
+
+    const buttons =
+        document.querySelectorAll(".payment-button");
+
+    buttons.forEach(function(button) {
+
+        button.disabled = false;
+        button.style.opacity = "1";
+
+    });
+}
+
+
+/* ==========================================================
+   PAIEMENT LOGAPAY
+========================================================== */
+
+function payWithLogaPay(method) {
+
+    const msg =
+        document.getElementById("paymentMsg");
+
+    if (!msg) {
+        console.error("paymentMsg introuvable.");
+        return;
+    }
+
+
+    /* ======================================================
+       MONTANT FIXE
+    ====================================================== */
+
+    const amount = CODE_AMOUNT;
+
+
+    /* ======================================================
+       VÉRIFICATION DU MOYEN DE PAIEMENT
+    ====================================================== */
+
+    if (
+        method !== "moncash" &&
+        method !== "natcash"
+    ) {
+
+        msg.innerHTML =
+            "❌ Moyen de paiement invalide.";
+
+        msg.style.color = "#d33";
+
+        return;
+    }
+
+
+    /* ======================================================
+       CRÉATION DE LA COMMANDE
+    ====================================================== */
+
+    const orderId =
+        "ORD" + Date.now();
+
+
+    /* ======================================================
+       MESSAGE
+    ====================================================== */
+
+    msg.innerHTML =
+        "🔐 Connexion sécurisée à LogaPay...";
+
+    msg.style.color =
+        "#729c12";
+
+
+    /* ======================================================
+       DÉSACTIVER LES BOUTONS
+    ====================================================== */
+
+    const buttons =
+        document.querySelectorAll(".payment-button");
+
+    buttons.forEach(function(button) {
+
+        button.disabled = true;
+        button.style.opacity = "0.6";
+
+    });
+
+
+    /* ======================================================
+       DONNÉES ENVOYÉES À LOGAPAY
+    ====================================================== */
+
+    const paymentData = {
+
+        action: "createPayment",
+
+        amount: amount,
+
+        orderId: orderId,
+
+        paymentMethod: method
+
+    };
+
+
+    console.log(
+        "Paiement LogaPay :",
+        paymentData
+    );
+
+
+    /* ======================================================
+       APPEL API LOGAPAY
+    ====================================================== */
+
+    fetch(
+        LOGAPAY_API_URL,
+        {
+            method: "POST",
+
+            body:
+                JSON.stringify(paymentData)
+        }
+    )
+
+    .then(function(response) {
+
+        if (!response.ok) {
+
+            throw new Error(
+                "HTTP " + response.status
+            );
+        }
+
+        return response.json();
+
+    })
+
+    .then(function(data) {
+
+        console.log(
+            "Réponse LogaPay :",
+            data
+        );
+
+
+        /* ==================================================
+           REDIRECTION LOGAPAY
+        ================================================== */
+
+        if (
+            data &&
+            data.redirect_url
+        ) {
+
+            msg.innerHTML =
+                "✅ Redirection vers LogaPay...";
+
+            msg.style.color =
+                "#729c12";
+
+
+            setTimeout(function() {
+
+                window.location.href =
+                    data.redirect_url;
+
+            }, 300);
+
+
+            return;
+        }
+
+
+        /* ==================================================
+           ERREUR
+        ================================================== */
+
+        msg.innerHTML =
+            "❌ Erreur lors de la création du paiement.";
+
+        msg.style.color =
+            "#d33";
+
+
+        console.error(
+            "Réponse LogaPay invalide :",
+            data
+        );
+
+
+        enablePaymentButtons();
+
+    })
+
+    .catch(function(error) {
+
+        console.error(
+            "Erreur LogaPay :",
+            error
+        );
+
+
+        msg.innerHTML =
+            "❌ Erreur de connexion au serveur.";
+
+        msg.style.color =
+            "#d33";
+
+
+        enablePaymentButtons();
+
+    });
+
+}
+
+</script>
+
+
+<!-- =====================================================
+     PAGE
+====================================================== -->
+
+<div class="container">
+
+
+    <!-- =================================================
+         LOGO
+    ================================================== -->
+
+
+    <!-- =================================================
+         NOM DU RÉSEAU
+    ================================================== -->
+
+    <div class="network-name">
+
+        CLERVAL'S NETWORK
+
+    </div>
+
+
+    <!-- =================================================
+         TEXTE DÉFILANT
+    ================================================== -->
+
+    <div class="marquee">
+
+        <div class="marquee-content">
+
+            📶 Bienvenue sur Clerval's Network
+            &nbsp;&nbsp; • &nbsp;&nbsp;
+            Internet rapide et accessible
+            &nbsp;&nbsp; • &nbsp;&nbsp;
+            Achte yon kod pou konekte
+            &nbsp;&nbsp; • &nbsp;&nbsp;
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         CONNEXION
+    ================================================== -->
+
+    <div class="login-section">
+
+        <div class="login-title">
+
+            🎟️ Entrez votre code d'accès
+
+        </div>
+
+
+        <div class="login-box">
+
+            <form name="login"
+                  action="$(link-login-only)"
+                  method="post"
+                  $(if chap-id)
+                  onSubmit="return doLogin()"
+                  $(endif)>
+
+
+                <input
+                    type="hidden"
+                    name="dst"
+                    value="$(link-orig)"
+                >
+
+
+                <input
+                    type="hidden"
+                    name="popup"
+                    value="true"
+                >
+
+
+                <!-- CODE -->
+
+                <input
+                    class="code-input"
+                    name="username"
+                    type="text"
+                    value="$(username)"
+                    placeholder="Entrez votre code"
+                    autocomplete="off"
+                    required
+                >
+
+
+                <!-- =================================================
+                     MOT DE PASSE CACHÉ
+                     Pour CHAP MikroTik
+                ================================================== -->
+
+                <input
+                    type="hidden"
+                    name="password"
+                    value=""
+                >
+
+
+                <!-- CONNEXION -->
+
+                <button
+                    type="submit"
+                    class="login-button">
+
+                    KONEKTE
+
+                </button>
+
+
+            </form>
+
+
+            <!-- ERREUR -->
+
+            <div class="error-message">
+
+                $(if error)
+                    $(error)
+                $(endif)
+
+            </div>
+
+
+            <!-- ACHAT -->
+
+            <button
+                type="button"
+                class="buy-button"
+                onclick="openBuyModal()">
+
+                🛒 ACHTE YON KOD
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         PUBLICITÉS
+    ================================================== -->
+
+    <div class="ad-section">
+
+        <div class="ad-label">
+
+            Publicité
+
+        </div>
+
+
+        <div class="ad-slider">
+
+            <div class="ad-track">
+
+
+                <!-- PUBLICITÉ 1 -->
+
+                <div class="ad-slide">
+
+                    <img
+                        src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgDV1ivoEs_vKP9SmBB-ZHQETCBQQhYmvM-60uQXduPLgiUvh9_68JHzbDS84qyIu-TAonBanfK5oWv6QLGGiCSv9LE1pXKTcY1CQxJhzoLwy1gpz07ROlJK4Pae841m6z960jpCovSjsbIxm-VOjK4baOiRKrTuQ2qfOMc_8DBDGHRcmsythdXHxfMsJs/s1024/WhatsApp%20Image%202025-09-29%20at%202.58.51%20PM.jpeg"
+                        alt="Publicité 1">
+
+                    <div class="ad-title">
+
+                        Découvrez notre offre
+
+                        <span>
+                            Une solution adaptée à vos besoins
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PUBLICITÉ 2 -->
+
+                <div class="ad-slide">
+
+                    <img
+                        src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhNy2S1arsGjPBcCDXm54s_nq5AjIMFPAmfBCZmuVrp9oe-aoGC1FaY7j5tscaa8Hm3JX6MxVsYS8DO-xsleHETNgt_aoYHwkhEfj9yu3X9w1HXTStTLgGN1KGGQ5cgKiR3XGWuGyVd6n4lyJqiSJKun_jEgtAsLdYgY01B9HyORUUS8gXmX6p0YoDx_pU/s576/images%20(5).jpeg"
+                        alt="Publicité 2">
+
+                    <div class="ad-title">
+
+                        Une nouvelle opportunité
+
+                        <span>
+                            Profitez de nos services
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PUBLICITÉ 3 -->
+
+                <div class="ad-slide">
+
+                    <img
+                        src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiPMBx_YYymgYzYSXSKj8qkDuV4qZfzctPKqgtEdqzpExaea6Lwu1hCthx0eZL17D0BdAHfTF2u0-vzjTlXg9kCorfw4zRr6kTJNjtjJo5Ogl53CzpiXtSFNzdA_dJuIxTNLvpggxxG1cvuM8KEpwP_IhkPL-oN3V7UynYiFG6MPpQQ4jvovv0_AnOruYk/s538/images%20(9).jpeg"
+                        alt="Publicité 3">
+
+                    <div class="ad-title">
+
+                        Votre publicité ici
+
+                        <span>
+                            Contactez-nous pour annoncer
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         INFORMATION
+    ================================================== -->
+
+
+    <!-- =================================================
+         FOOTER
+    ================================================== -->
+
+    <div class="footer">
+
+        <div>
+
+            Powered by:
+
+            <span class="brand">
+                CLERVAL'S NETWORK SOLUTIONS
+            </span>
+
+        </div>
+
+        <div>
+
+            Besoin d'aide ?
+
+            <span class="phone">
+                +509 3218 4008 / +509 4646 77015
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL ACHAT LOGAPAY
+====================================================== -->
+
+<div
+    id="buyModal"
+    class="modal"
+    onclick="closeBuyModal(event)"
+>
+
+    <div class="modal-box">
+
+
+        <h2>
+
+            🛒 Acheter un code
+
+        </h2>
+
+
+        <p>
+
+            Votre code Internet coûte
+            <strong>50 Gdes</strong>.
+
+            <br>
+
+            Choisissez votre moyen de paiement.
+
+        </p>
+
+
+        <!-- MONCASH -->
+
+        <button
+            type="button"
+            class="payment-button buy-button"
+            onclick="payWithLogaPay('moncash')"
+        >
+
+            Payer avec MonCash
+
+        </button>
+
+
+        <!-- NATCASH -->
+
+        <button
+            type="button"
+            class="payment-button buy-button"
+            onclick="payWithLogaPay('natcash')"
+        >
+
+            Payer avec NatCash
+
+        </button>
+
+
+        <!-- MESSAGE -->
+
+        <div
+            id="paymentMsg"
+            style="
+                margin-top:15px;
+                min-height:20px;
+                font-size:12px;
+            "
+        ></div>
+
+
+        <!-- FERMER -->
+
+        <button
+            type="button"
+            class="close-button"
+            onclick="closeBuyModal()"
+        >
+
+            Fermer
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<style>
+
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+    padding: 0;
+}
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+:root {
+
+    --green: #729c12;
+
+    --green-dark: #5f850e;
+
+    --green-light: #eef5df;
+
+    --text: #222222;
+
+    --gray: #707070;
+
+    --border: #e5e5e5;
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+body {
+
+    min-height: 100vh;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #ffffff;
+
+    color: var(--text);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: flex-start;
+
+    padding: 20px 15px;
+}
+
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
+.container {
+
+    width: 100%;
+
+    max-width: 430px;
+
+    background: #ffffff;
+
+    text-align: center;
+}
+
+
+/* =====================================================
+   LOGO
+===================================================== */
+
+.logo-container {
+
+    width: 90px;
+
+    height: 90px;
+
+    margin: 5px auto 12px;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    border:
+        2px solid
+        rgba(114,156,18,0.25);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0,0,0,0.08);
+}
+
+
+.logo {
+
+    max-width: 72px;
+
+    max-height: 72px;
+
+    object-fit: contain;
+
+    border-radius: 50%;
+}
+
+
+/* =====================================================
+   NOM DU RÉSEAU
+===================================================== */
+
+.network-name {
+
+    font-size: 25px;
+
+    font-weight: 800;
+
+    color: var(--green);
+
+    letter-spacing: 0.8px;
+
+    margin-bottom: 5px;
+
+    text-transform: uppercase;
+}
+
+
+/* =====================================================
+   SOUS-TITRE
+===================================================== */
+
+.network-subtitle {
+
+    color: var(--gray);
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    margin-bottom: 16px;
+}
+
+
+/* =====================================================
+   TEXTE DÉFILANT
+===================================================== */
+
+.marquee {
+
+    width: 100%;
+
+    overflow: hidden;
+
+    background: var(--green-light);
+
+    border:
+        1px solid
+        rgba(114,156,18,0.15);
+
+    border-radius: 10px;
+
+    margin-bottom: 20px;
+
+    white-space: nowrap;
+}
+
+
+.marquee-content {
+
+    display: inline-block;
+
+    padding: 10px 0;
+
+    color: var(--green);
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    animation:
+        marquee 12s linear infinite;
+}
+
+
+@keyframes marquee {
+
+    0% {
+
+        transform:
+            translateX(100%);
+    }
+
+    100% {
+
+        transform:
+            translateX(-100%);
+    }
+}
+
+
+/* =====================================================
+   SECTION CONNEXION
+===================================================== */
+
+.login-section {
+
+    width: 100%;
+
+    padding: 20px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 8px 30px
+        rgba(0,0,0,0.06);
+
+    margin-bottom: 18px;
+}
+
+
+/* =====================================================
+   TITRE CONNEXION
+===================================================== */
+
+.login-title {
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    color: #333333;
+
+    margin-bottom: 15px;
+}
+
+
+/* =====================================================
+   FORMULAIRE
+===================================================== */
+
+.login-box {
+
+    width: 100%;
+}
+
+
+/* =====================================================
+   CHAMP CODE
+===================================================== */
+
+.code-input {
+
+    display: block;
+
+    width: 100%;
+
+    height: 52px;
+
+    border:
+        1px solid
+        #dddddd;
+
+    outline: none;
+
+    border-radius: 12px;
+
+    background: #fafafa;
+
+    color: #222222;
+
+    padding: 0 15px;
+
+    font-size: 15px;
+
+    text-align: center;
+
+    letter-spacing: 1.5px;
+
+    transition:
+        border 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.code-input::placeholder {
+
+    color: #999999;
+
+    letter-spacing: 0;
+}
+
+
+.code-input:focus {
+
+    border-color:
+        var(--green);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(114,156,18,0.12);
+
+    background: #ffffff;
+}
+
+
+/* =====================================================
+   BOUTON KONEKTE
+===================================================== */
+
+.login-button {
+
+    width: 100%;
+
+    height: 52px;
+
+    margin-top: 10px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: var(--green);
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 6px 15px
+        rgba(114,156,18,0.20);
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+.login-button:hover {
+
+    background: var(--green-dark);
+}
+
+
+.login-button:active {
+
+    transform: scale(0.98);
+}
+
+
+/* =====================================================
+   ERREUR
+===================================================== */
+
+.error-message {
+
+    margin-top: 10px;
+
+    padding: 9px;
+
+    border-radius: 9px;
+
+    background: #fff1f1;
+
+    color: #d33;
+
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   ACHETER UN CODE
+===================================================== */
+
+.buy-button {
+
+    width: 100%;
+
+    min-height: 50px;
+
+    margin-top: 14px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: var(--green);
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 6px 15px
+        rgba(114,156,18,0.18);
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+.buy-button:hover {
+
+    background: var(--green-dark);
+}
+
+
+.buy-button:active {
+
+    transform: scale(0.98);
+}
+
+
+/* =====================================================
+   PUBLICITÉ
+===================================================== */
+
+.ad-section {
+
+    width: 100%;
+
+    margin-top: 18px;
+
+    margin-bottom: 20px;
+}
+
+
+.ad-label {
+
+    font-size: 11px;
+
+    color: #999999;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 8px;
+}
+
+
+/* =====================================================
+   SLIDER PUBLICITAIRE
+===================================================== */
+
+.ad-slider {
+
+    width: 100%;
+
+    overflow: hidden;
+
+    border-radius: 16px;
+
+    border:
+        1px solid var(--border);
+
+    background: #ffffff;
+
+    box-shadow:
+        0 7px 25px
+        rgba(0,0,0,0.08);
+}
+
+
+.ad-track {
+
+    display: flex;
+
+    width: 300%;
+
+    animation:
+        adSlide 15s infinite;
+}
+
+
+.ad-slide {
+
+    width: 33.3333%;
+
+    flex-shrink: 0;
+}
+
+
+.ad-slide img {
+
+    width: 100%;
+
+    height: 190px;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+
+/* =====================================================
+   TITRE PUBLICITÉ
+===================================================== */
+
+.ad-title {
+
+    padding: 13px 12px;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    color: #333333;
+
+    background: #ffffff;
+}
+
+
+.ad-title span {
+
+    display: block;
+
+    margin-top: 4px;
+
+    font-size: 11px;
+
+    font-weight: normal;
+
+    color: #888888;
+}
+
+
+/* =====================================================
+   ANIMATION PUBLICITÉ
+===================================================== */
+
+@keyframes adSlide {
+
+    0% {
+
+        transform:
+            translateX(0);
+    }
+
+    27% {
+
+        transform:
+            translateX(0);
+    }
+
+    33% {
+
+        transform:
+            translateX(-33.3333%);
+    }
+
+    60% {
+
+        transform:
+            translateX(-33.3333%);
+    }
+
+    66% {
+
+        transform:
+            translateX(-66.6666%);
+    }
+
+    93% {
+
+        transform:
+            translateX(-66.6666%);
+    }
+
+    100% {
+
+        transform:
+            translateX(0);
+    }
+}
+
+
+/* =====================================================
+   FORFAITS
+===================================================== */
+
+.plans-title {
+
+    margin-top: 18px;
+
+    margin-bottom: 10px;
+
+    color: #555555;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+.plans {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 9px;
+}
+
+
+.plan {
+
+    padding: 12px 8px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    transition:
+        border 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.plan:hover {
+
+    border-color:
+        rgba(114,156,18,0.35);
+
+    box-shadow:
+        0 5px 15px
+        rgba(0,0,0,0.05);
+}
+
+
+.plan-name {
+
+    font-size: 11px;
+
+    color: #888888;
+
+    margin-bottom: 5px;
+}
+
+
+.plan-price {
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    color: var(--green);
+}
+
+
+/* =====================================================
+   INFORMATION
+===================================================== */
+
+.info {
+
+    margin-top: 16px;
+
+    color: #888888;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+
+    margin-top: 20px;
+
+    padding-top: 15px;
+
+    border-top:
+        1px solid #eeeeee;
+
+    color: #999999;
+
+    font-size: 10px;
+
+    line-height: 1.7;
+}
+
+
+.brand {
+
+    color: var(--green);
+
+    font-weight: bold;
+}
+
+
+.phone {
+
+    color: #d33;
+
+    font-weight: bold;
+}
+
+
+/* =====================================================
+   MODAL ACHAT
+===================================================== */
+
+.modal {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(0,0,0,0.65);
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 20px;
+
+    z-index: 1000;
+}
+
+
+.modal-box {
+
+    width: 100%;
+
+    max-width: 380px;
+
+    background: #ffffff;
+
+    border-radius: 20px;
+
+    padding: 25px;
+
+    text-align: center;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,0.30);
+}
+
+
+.modal-box h2 {
+
+    color: var(--green);
+
+    font-size: 20px;
+
+    margin-bottom: 10px;
+}
+
+
+.modal-box p {
+
+    color: #666666;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    margin-bottom: 18px;
+}
+
+
+.close-button {
+
+    width: 100%;
+
+    padding: 12px;
+
+    margin-top: 12px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #eeeeee;
+
+    color: #333333;
+
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 380px) {
+
+    body {
+
+        padding:
+            12px 10px;
+    }
+
+
+    .network-name {
+
+        font-size: 21px;
+    }
+
+
+    .login-section {
+
+        padding: 17px;
+    }
+
+
+    .ad-slide img {
+
+        height: 155px;
+    }
+
+
+    .code-input {
+
+        height: 50px;
+    }
+
+
+    .login-button {
+
+        height: 50px;
+    }
+
+
+    .buy-button {
+
+        min-height: 48px;
+    }
+}
+
+</style>
+
+</body>
+</html>
