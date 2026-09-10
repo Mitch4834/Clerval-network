@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Clerval's Network - Roulette Bonus</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#050b2b;
+    color:white;
+    min-height:100vh;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+.app{
+    display:flex;
+    min-height:100vh;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar{
+    width:240px;
+    background:#07113d;
+    border-right:1px solid rgba(255,255,255,.08);
+    padding:25px 15px;
+    display:flex;
+    flex-direction:column;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:0 12px 30px;
+}
+
+.logo-icon{
+    font-size:38px;
+}
+
+.logo-text{
+    font-size:19px;
+    font-weight:800;
+    line-height:1.1;
+}
+
+.logo-text span{
+    color:#63ef3e;
+    display:block;
+    letter-spacing:2px;
+    font-size:13px;
+}
+
+.menu{
+    background:#0a1749;
+    border-radius:20px;
+    padding:10px;
+}
+
+.menu-item{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:15px 13px;
+    margin:4px 0;
+    border-radius:12px;
+    color:#dbe2ff;
+    font-size:14px;
+    cursor:pointer;
+}
+
+.menu-item:hover{
+    background:#10215e;
+}
+
+.menu-item.active{
+    background:#102858;
+    border-left:3px solid #62ef3c;
+    color:white;
+}
+
+.menu-icon{
+    width:25px;
+    text-align:center;
+    font-size:19px;
+}
+
+.sidebar-card{
+    margin-top:auto;
+    background:#0b1746;
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:18px;
+    padding:25px 15px;
+    text-align:center;
+}
+
+.wifi{
+    font-size:50px;
+    margin-bottom:15px;
+}
+
+.sidebar-card h3{
+    font-size:15px;
+    margin-bottom:8px;
+}
+
+.sidebar-card p{
+    color:#9faad2;
+    font-size:12px;
+    line-height:1.6;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+    flex:1;
+    padding:30px;
+    overflow:hidden;
+}
+
+/* HEADER */
+
+.top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    max-width:1100px;
+    margin:auto;
+}
+
+.title{
+    text-align:center;
+    flex:1;
+}
+
+.title h1{
+    font-size:34px;
+    font-weight:900;
+}
+
+.title h1::before,
+.title h1::after{
+    content:"✦";
+    color:#65ef3c;
+    margin:0 18px;
+    font-size:18px;
+}
+
+.title p{
+    margin-top:8px;
+    color:#71f43d;
+    font-size:16px;
+    font-weight:700;
+}
+
+.user{
+    width:180px;
+    background:#0b1746;
+    border:1px solid rgba(255,255,255,.08);
+    padding:12px;
+    border-radius:15px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.user-avatar{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:#203a78;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+}
+
+.user small{
+    color:#9ca7ca;
+}
+
+.user strong{
+    display:block;
+    margin-top:3px;
+}
+
+/* =========================
+   STEPS
+========================= */
+
+.steps{
+    max-width:1100px;
+    margin:25px auto;
+    background:#091647;
+    border:1px solid #162967;
+    border-radius:17px;
+    padding:17px;
+    display:flex;
+    justify-content:space-around;
+}
+
+.step{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#7f8bb5;
+    font-size:13px;
+}
+
+.step-number{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    border:2px solid #384675;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+.step.done,
+.step.active{
+    color:white;
+}
+
+.step.done .step-number{
+    background:#62df3d;
+    color:#051027;
+    border-color:#62df3d;
+}
+
+.step.active .step-number{
+    background:#b6ff29;
+    color:#07102b;
+    border-color:#b6ff29;
+}
+
+.step-line{
+    width:55px;
+    height:2px;
+    background:#24346a;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.content{
+    max-width:1100px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:1fr 350px;
+    gap:25px;
+}
+
+/* =========================
+   WHEEL
+========================= */
+
+.wheel-area{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.wheel-container{
+    position:relative;
+    width:510px;
+    height:510px;
+    max-width:100%;
+}
+
+.pointer{
+    position:absolute;
+    z-index:10;
+    top:-8px;
+    left:50%;
+    transform:translateX(-50%);
+    width:0;
+    height:0;
+    border-left:19px solid transparent;
+    border-right:19px solid transparent;
+    border-top:40px solid #ff514d;
+    filter:drop-shadow(0 0 10px #ff514d);
+}
+
+.wheel{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    border:12px solid #2728a0;
+    box-shadow:
+        0 0 20px #6529ff,
+        0 0 60px rgba(88,40,255,.45),
+        inset 0 0 25px rgba(255,255,255,.2);
+
+    background:
+    conic-gradient(
+        #ffbd13 0deg 45deg,
+        #5bcf35 45deg 90deg,
+        #16aeea 90deg 135deg,
+        #265fe9 135deg 180deg,
+        #9c21e5 180deg 225deg,
+        #ee2797 225deg 270deg,
+        #ff7015 270deg 315deg,
+        #ed2e2e 315deg 360deg
+    );
+
+    position:relative;
+
+    transition:transform 5s cubic-bezier(.12,.72,.14,1);
+}
+
+/* roue labels */
+
+.label{
+    position:absolute;
+    width:100%;
+    height:100%;
+    left:0;
+    top:0;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding-top:50px;
+    text-align:center;
+    font-weight:900;
+    font-size:15px;
+}
+
+.label span{
+    width:100px;
+    line-height:1.3;
+}
+
+.l1{transform:rotate(22.5deg);}
+.l2{transform:rotate(67.5deg);}
+.l3{transform:rotate(112.5deg);}
+.l4{transform:rotate(157.5deg);}
+.l5{transform:rotate(202.5deg);}
+.l6{transform:rotate(247.5deg);}
+.l7{transform:rotate(292.5deg);}
+.l8{transform:rotate(337.5deg);}
+
+.center-button{
+    position:absolute;
+    z-index:5;
+    width:130px;
+    height:130px;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    border:7px solid #65ef3c;
+    background:#071326;
+    color:white;
+    font-weight:900;
+    font-size:16px;
+    cursor:pointer;
+    box-shadow:
+        0 0 15px #65ef3c,
+        0 0 30px rgba(101,239,60,.5);
+}
+
+.center-button:hover{
+    transform:translate(-50%,-50%) scale(1.05);
+}
+
+.center-button:disabled{
+    cursor:not-allowed;
+    opacity:.7;
+}
+
+/* =========================
+   FAIRNESS
+========================= */
+
+.fair{
+    margin-top:20px;
+    background:#091746;
+    border:1px solid #243574;
+    border-radius:14px;
+    padding:14px 25px;
+    font-size:13px;
+    color:#b9c3e5;
+}
+
+.fair strong{
+    color:white;
+}
+
+/* =========================
+   RESULT PANEL
+========================= */
+
+.result-card{
+    background:#091746;
+    border:1px solid #20336e;
+    border-radius:22px;
+    padding:25px;
+    min-height:470px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    text-align:center;
+    box-shadow:0 15px 40px rgba(0,0,0,.2);
+}
+
+.result-card h2{
+    color:#6af03d;
+    font-size:26px;
+    margin-bottom:10px;
+}
+
+.result-card h3{
+    font-size:18px;
+    margin-bottom:20px;
+}
+
+.reward{
+    width:180px;
+    height:180px;
+    margin:0 auto 20px;
+    border:7px solid #65ef3c;
+    border-radius:50%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    box-shadow:
+        0 0 20px #65ef3c,
+        0 0 45px rgba(101,239,60,.3);
+}
+
+.reward-icon{
+    font-size:45px;
+}
+
+.reward strong{
+    color:#8dff52;
+    font-size:24px;
+    margin-top:8px;
+}
+
+.result-description{
+    color:#d3d9ee;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.info{
+    background:#12245b;
+    padding:15px;
+    border-radius:12px;
+    color:#aeb9dd;
+    font-size:12px;
+    margin-top:20px;
+}
+
+.continue{
+    border:0;
+    background:#63df3b;
+    color:#061329;
+    font-weight:900;
+    padding:14px;
+    border-radius:10px;
+    margin-top:18px;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.continue:hover{
+    background:#79f34f;
+}
+
+/* =========================
+   BOTTOM CARDS
+========================= */
+
+.bottom{
+    max-width:1100px;
+    margin:25px auto 0;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.bottom-card{
+    background:#091746;
+    border:1px solid #1d2e68;
+    border-radius:15px;
+    padding:20px;
+}
+
+.bottom-card-icon{
+    font-size:28px;
+    margin-bottom:10px;
+}
+
+.bottom-card h3{
+    font-size:15px;
+    margin-bottom:8px;
+}
+
+.bottom-card p{
+    font-size:12px;
+    color:#9da8cc;
+    line-height:1.5;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:900px){
+
+    .sidebar{
+        display:none;
+    }
+
+    .main{
+        padding:15px;
+    }
+
+    .top{
+        flex-direction:column;
+        gap:15px;
+    }
+
+    .title h1{
+        font-size:25px;
+    }
+
+    .title h1::before,
+    .title h1::after{
+        display:none;
+    }
+
+    .user{
+        width:100%;
+        max-width:300px;
+    }
+
+    .steps{
+        overflow:hidden;
+        justify-content:flex-start;
+        gap:20px;
+    }
+
+    .step{
+        min-width:120px;
+    }
+
+    .step-line{
+        display:none;
+    }
+
+    .content{
+        grid-template-columns:1fr;
+    }
+
+    .wheel-container{
+        width:360px;
+        height:360px;
+    }
+
+    .center-button{
+        width:100px;
+        height:100px;
+        font-size:13px;
+    }
+
+    .label{
+        padding-top:35px;
+        font-size:11px;
+    }
+
+    .label span{
+        width:75px;
+    }
+
+    .result-card{
+        min-height:350px;
+    }
+
+    .bottom{
+        grid-template-columns:1fr;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        <div class="logo-icon">📶</div>
+
+        <div class="logo-text">
+            CLERVAL'S
+            <span>NETWORK</span>
+        </div>
+    </div>
+
+    <div class="menu">
+
+        <div class="menu-item">
+            <div class="menu-icon">⌂</div>
+            Accueil
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-icon">📶</div>
+            Connexion Wi-Fi
+        </div>
+
+        <div class="menu-item active">
+            <div class="menu-icon">🎁</div>
+            Roulette Bonus
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-icon">◷</div>
+            Historique
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-icon">🔗</div>
+            Support
+        </div>
+
+    </div>
+
+    <div class="sidebar-card">
+
+        <div class="wifi">📶</div>
+
+        <h3>Internet rapide.</h3>
+
+        <p>
+            Connexion fiable.<br>
+            Restez connecté,<br>
+            restez productif !
+        </p>
+
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+    <div class="top">
+
+        <div class="title">
+
+            <h1>TOURNEZ LA ROUE</h1>
+
+            <p>
+                TENTEZ VOTRE CHANCE ET GAGNEZ UN BONUS !
+            </p>
+
+        </div>
+
+        <div class="user">
+
+            <div class="user-avatar">
+                👤
+            </div>
+
+            <div>
+                <small>Bienvenue,</small>
+                <strong>Client</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STEPS -->
+
+    <div class="steps">
+
+        <div class="step done">
+
+            <div class="step-number">✓</div>
+
+            <div>
+                <strong>Connexion</strong><br>
+                Code validé
+            </div>
+
+        </div>
+
+        <div class="step-line"></div>
+
+        <div class="step active">
+
+            <div class="step-number">2</div>
+
+            <div>
+                <strong>Roulette</strong><br>
+                Tournez la roue
+            </div>
+
+        </div>
+
+        <div class="step-line"></div>
+
+        <div class="step">
+
+            <div class="step-number">3</div>
+
+            <div>
+                <strong>Résultat</strong><br>
+                Découvrez votre gain
+            </div>
+
+        </div>
+
+        <div class="step-line"></div>
+
+        <div class="step">
+
+            <div class="step-number">4</div>
+
+            <div>
+                <strong>Bonus ajouté</strong><br>
+                Profitez du bonus
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONTENT -->
+
+    <section class="content">
+
+
+        <!-- WHEEL -->
+
+        <div class="wheel-area">
+
+            <div class="wheel-container">
+
+                <div class="pointer"></div>
+
+                <div class="wheel" id="wheel">
+
+                    <div class="label l1">
+                        <span>⏱<br>+1<br>HEURE</span>
+                    </div>
+
+                    <div class="label l2">
+                        <span>⏱<br>+30<br>MINUTES</span>
+                    </div>
+
+                    <div class="label l3">
+                        <span>↔<br>+100<br>MB</span>
+                    </div>
+
+                    <div class="label l4">
+                        <span>🎁<br>CODE<br>GRATUIT</span>
+                    </div>
+
+                    <div class="label l5">
+                        <span>↻<br>REJOUEZ<br>DEMAIN</span>
+                    </div>
+
+                    <div class="label l6">
+                        <span>☹<br>PAS DE<br>CHANCE</span>
+                    </div>
+
+                    <div class="label l7">
+                        <span>↕<br>+500<br>MB</span>
+                    </div>
+
+                    <div class="label l8">
+                        <span>⏱<br>+2<br>HEURES</span>
+                    </div>
+
+                </div>
+
+                <button
+                    class="center-button"
+                    id="spinButton"
+                    onclick="spinWheel()">
+
+                    TOURNER<br>
+                    LA ROUE
+
+                </button>
+
+            </div>
+
+
+            <div class="fair">
+
+                🛡️ <strong>100% ÉQUITABLE</strong><br>
+
+                Le résultat est déterminé aléatoirement.
+                Bonne chance !
+
+            </div>
+
+        </div>
+
+
+        <!-- RESULT -->
+
+        <div class="result-card" id="resultCard">
+
+            <h2>PRÊT ?</h2>
+
+            <h3>
+                Faites tourner la roue !
+            </h3>
+
+            <div class="reward">
+
+                <div class="reward-icon">
+                    🎁
+                </div>
+
+                <strong>?</strong>
+
+            </div>
+
+            <p class="result-description">
+
+                Tournez la roue pour découvrir
+                votre bonus Internet.
+
+            </p>
+
+            <div class="info">
+
+                Votre résultat sera affiché ici
+                après la rotation.
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- BOTTOM -->
+
+    <div class="bottom">
+
+        <div class="bottom-card">
+
+            <div class="bottom-card-icon">
+                🎁
+            </div>
+
+            <h3>Jouez et gagnez</h3>
+
+            <p>
+                Tournez la roue après votre connexion
+                et tentez de gagner des bonus.
+            </p>
+
+        </div>
+
+
+        <div class="bottom-card">
+
+            <div class="bottom-card-icon">
+                🛡️
+            </div>
+
+            <h3>Sécurisé & équitable</h3>
+
+            <p>
+                Chaque résultat est généré
+                aléatoirement.
+            </p>
+
+        </div>
+
+
+        <div class="bottom-card">
+
+            <div class="bottom-card-icon">
+                ⚡
+            </div>
+
+            <h3>Bonus instantané</h3>
+
+            <p>
+                Votre gain peut être automatiquement
+                ajouté à votre compte.
+            </p>
+
+        </div>
+
+    </div>
+
+</main>
+
+</div>
+
+
+<script>
+
+const prizes = [
+
+    {
+        name:"+1 HEURE",
+        icon:"⏱",
+        description:"Vous avez gagné 1 heure de connexion supplémentaire."
+    },
+
+    {
+        name:"+30 MINUTES",
+        icon:"⏱",
+        description:"Vous avez gagné 30 minutes de connexion supplémentaire."
+    },
+
+    {
+        name:"+100 MB",
+        icon:"↔",
+        description:"Vous avez gagné 100 MB de données supplémentaires."
+    },
+
+    {
+        name:"CODE GRATUIT",
+        icon:"🎁",
+        description:"Vous avez gagné un code Internet gratuit."
+    },
+
+    {
+        name:"REJOUEZ DEMAIN",
+        icon:"↻",
+        description:"Vous pourrez retenter votre chance demain."
+    },
+
+    {
+        name:"PAS DE CHANCE",
+        icon:"☹",
+        description:"Pas de chance cette fois. Revenez demain !"
+    },
+
+    {
+        name:"+500 MB",
+        icon:"↕",
+        description:"Vous avez gagné 500 MB de données supplémentaires."
+    },
+
+    {
+        name:"+2 HEURES",
+        icon:"⏱",
+        description:"Félicitations ! Vous avez gagné 2 heures supplémentaires."
+    }
+
+];
+
+
+let currentRotation = 0;
+let spinning = false;
+
+
+function spinWheel(){
+
+    if(spinning) return;
+
+    spinning = true;
+
+    const button =
+        document.getElementById("spinButton");
+
+    button.disabled = true;
+
+    button.innerHTML = "EN COURS...";
+
+
+    /*
+       Choix aléatoire du résultat
+    */
+
+    const index =
+        Math.floor(Math.random() * prizes.length);
+
+
+    /*
+       Chaque section = 45 degrés.
+       On ajoute plusieurs tours avant l'arrêt.
+    */
+
+    const sectionAngle = 360 / prizes.length;
+
+    const targetAngle =
+        360 - (index * sectionAngle + sectionAngle / 2);
+
+
+    const extraRotation =
+        360 * 6;
+
+    currentRotation +=
+        extraRotation + targetAngle;
+
+
+    const wheel =
+        document.getElementById("wheel");
+
+
+    wheel.style.transform =
+        `rotate(${currentRotation}deg)`;
+
+
+    setTimeout(() => {
+
+        showResult(prizes[index]);
+
+        spinning = false;
+
+        button.disabled = false;
+
+        button.innerHTML =
+            "TOURNER<br>LA ROUE";
+
+    },5000);
+
+}
+
+
+function showResult(prize){
+
+    const card =
+        document.getElementById("resultCard");
+
+    card.innerHTML = `
+
+        <h2>FÉLICITATIONS !</h2>
+
+        <h3>Vous avez gagné</h3>
+
+        <div class="reward">
+
+            <div class="reward-icon">
+                ${prize.icon}
+            </div>
+
+            <strong>
+                ${prize.name}
+            </strong>
+
+        </div>
+
+        <p class="result-description">
+
+            ${prize.description}
+
+        </p>
+
+        <div class="info">
+
+            ℹ️ Votre résultat a été enregistré
+            avec succès.
+
+        </div>
+
+        <button
+            class="continue"
+            onclick="location.reload()">
+
+            CONTINUER
+
+        </button>
+
+    `;
+
+}
+
+</script>
+
+</body>
+</html>
+
