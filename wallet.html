@@ -1,0 +1,2185 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Clerval's Network - Mon Wallet</title>
+
+<style>
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+:root {
+
+    --green: #729c12;
+
+    --green-dark: #5d800f;
+
+    --green-light: #f2f6e8;
+
+    --text: #222222;
+
+    --gray: #777777;
+
+    --border: #e5e5e5;
+
+    --white: #ffffff;
+
+    --red: #d93025;
+
+}
+
+
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+    padding: 0;
+
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+body {
+
+    min-height: 100vh;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #ffffff;
+
+    color: var(--text);
+
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header {
+
+    height: 65px;
+
+    border-bottom:
+        1px solid var(--border);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        0 20px;
+
+    background: #ffffff;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 10;
+
+}
+
+
+.header-brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+
+.header-logo {
+
+    width: 40px;
+
+    height: 40px;
+
+    border-radius: 50%;
+
+    object-fit: contain;
+
+}
+
+
+.header-name {
+
+    color: var(--green);
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+}
+
+
+.profile-button {
+
+    width: 38px;
+
+    height: 38px;
+
+    border-radius: 50%;
+
+    border: 1px solid
+        rgba(114,156,18,0.25);
+
+    background:
+        var(--green-light);
+
+    color: var(--green);
+
+    font-size: 17px;
+
+    cursor: pointer;
+
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.main {
+
+    width: 100%;
+
+    max-width: 600px;
+
+    margin: auto;
+
+    padding:
+        25px 18px 100px;
+
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.page-title {
+
+    font-size: 25px;
+
+    font-weight: 800;
+
+    margin-bottom: 5px;
+
+}
+
+
+.page-subtitle {
+
+    color: var(--gray);
+
+    font-size: 13px;
+
+    margin-bottom: 22px;
+
+}
+
+
+/* =====================================================
+   WALLET CARD
+===================================================== */
+
+.wallet-card {
+
+    background:
+        linear-gradient(
+            135deg,
+            #729c12,
+            #5d800f
+        );
+
+    border-radius: 22px;
+
+    padding: 25px;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 12px 30px
+        rgba(114,156,18,0.25);
+
+    margin-bottom: 18px;
+
+}
+
+
+.wallet-label {
+
+    font-size: 12px;
+
+    opacity: 0.85;
+
+    margin-bottom: 8px;
+
+}
+
+
+.wallet-balance {
+
+    font-size: 34px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+
+}
+
+
+.wallet-currency {
+
+    font-size: 15px;
+
+    margin-left: 4px;
+
+}
+
+
+.wallet-bottom {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-top: 20px;
+
+}
+
+
+.wallet-status {
+
+    font-size: 11px;
+
+    background:
+        rgba(255,255,255,0.15);
+
+    padding:
+        6px 10px;
+
+    border-radius: 20px;
+
+}
+
+
+/* =====================================================
+   RECHARGE BUTTON
+===================================================== */
+
+.recharge-button {
+
+    width: 100%;
+
+    height: 54px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    background: var(--green);
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+
+    box-shadow:
+        0 7px 18px
+        rgba(114,156,18,0.20);
+
+}
+
+
+.recharge-button:hover {
+
+    background:
+        var(--green-dark);
+
+}
+
+
+.recharge-button:active {
+
+    transform: scale(0.98);
+
+}
+
+
+/* =====================================================
+   PAYMENT CARD
+===================================================== */
+
+.payment-card {
+
+    display: none;
+
+    background: #ffffff;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    margin-top: 18px;
+
+    box-shadow:
+        0 8px 25px
+        rgba(0,0,0,0.05);
+
+}
+
+
+.payment-card.show {
+
+    display: block;
+
+}
+
+
+.payment-title {
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    margin-bottom: 5px;
+
+}
+
+
+.payment-description {
+
+    color: var(--gray);
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    margin-bottom: 20px;
+
+}
+
+
+/* =====================================================
+   LOGAPAY BADGE
+===================================================== */
+
+.logapay {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    background:
+        var(--green-light);
+
+    border:
+        1px solid
+        rgba(114,156,18,0.15);
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    margin-bottom: 18px;
+
+}
+
+
+.logapay-icon {
+
+    width: 38px;
+
+    height: 38px;
+
+    border-radius: 10px;
+
+    background: var(--green);
+
+    color: #ffffff;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-weight: 800;
+
+}
+
+
+.logapay-name {
+
+    color: var(--green);
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+}
+
+
+.logapay-text {
+
+    color: var(--gray);
+
+    font-size: 11px;
+
+    margin-top: 2px;
+
+}
+
+
+/* =====================================================
+   INPUT
+===================================================== */
+
+.input-group {
+
+    margin-bottom: 15px;
+
+}
+
+
+.input-label {
+
+    display: block;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    margin-bottom: 7px;
+
+    color: #444444;
+
+}
+
+
+.input {
+
+    width: 100%;
+
+    height: 51px;
+
+    border:
+        1px solid #dddddd;
+
+    border-radius: 11px;
+
+    padding:
+        0 14px;
+
+    font-size: 14px;
+
+    outline: none;
+
+    background: #fafafa;
+
+}
+
+
+.input:focus {
+
+    border-color:
+        var(--green);
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(114,156,18,0.10);
+
+}
+
+
+/* =====================================================
+   AMOUNTS
+===================================================== */
+
+.amounts {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 8px;
+
+    margin-bottom: 15px;
+
+}
+
+
+.amount {
+
+    height: 43px;
+
+    border:
+        1px solid #dddddd;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #555555;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+
+.amount:hover {
+
+    border-color:
+        var(--green);
+
+    color:
+        var(--green);
+
+}
+
+
+.amount.selected {
+
+    background:
+        var(--green-light);
+
+    border-color:
+        var(--green);
+
+    color:
+        var(--green);
+
+}
+
+
+/* =====================================================
+   PAY BUTTON
+===================================================== */
+
+.pay-button {
+
+    width: 100%;
+
+    height: 52px;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background: var(--green);
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+}
+
+
+.pay-button:disabled {
+
+    opacity: 0.65;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =====================================================
+   LOADER
+===================================================== */
+
+.loader {
+
+    display: inline-block;
+
+    width: 16px;
+
+    height: 16px;
+
+    border:
+        2px solid
+        rgba(255,255,255,0.5);
+
+    border-top-color:
+        #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        spin 0.7s linear infinite;
+
+    vertical-align: middle;
+
+    margin-right: 7px;
+
+}
+
+
+@keyframes spin {
+
+    to {
+
+        transform:
+            rotate(360deg);
+
+    }
+
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+.message {
+
+    display: none;
+
+    padding: 11px;
+
+    border-radius: 10px;
+
+    margin-bottom: 15px;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+}
+
+
+.message.show {
+
+    display: block;
+
+}
+
+
+.message.success {
+
+    background: #f1f8e8;
+
+    color: var(--green);
+
+    border:
+        1px solid
+        rgba(114,156,18,0.20);
+
+}
+
+
+.message.error {
+
+    background: #fff1f0;
+
+    color: var(--red);
+
+    border:
+        1px solid #ffd6d2;
+
+}
+
+
+/* =====================================================
+   HISTORY
+===================================================== */
+
+.history-title {
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    margin:
+        28px 0 12px;
+
+}
+
+
+.history {
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+}
+
+
+.transaction {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 15px;
+
+    border-bottom:
+        1px solid #eeeeee;
+
+}
+
+
+.transaction:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.transaction-left {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+
+.transaction-icon {
+
+    width: 36px;
+
+    height: 36px;
+
+    border-radius: 10px;
+
+    background:
+        var(--green-light);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.transaction-name {
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+}
+
+
+.transaction-date {
+
+    font-size: 10px;
+
+    color: var(--gray);
+
+    margin-top: 3px;
+
+}
+
+
+.transaction-amount {
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+}
+
+
+.credit {
+
+    color: var(--green);
+
+}
+
+
+.debit {
+
+    color: var(--red);
+
+}
+
+
+/* =====================================================
+   EMPTY HISTORY
+===================================================== */
+
+.empty-history {
+
+    text-align: center;
+
+    padding: 30px 15px;
+
+    color: var(--gray);
+
+    font-size: 12px;
+
+}
+
+
+/* =====================================================
+   BOTTOM NAV
+===================================================== */
+
+.bottom-nav {
+
+    position: fixed;
+
+    bottom: 0;
+
+    left: 0;
+
+    right: 0;
+
+    height: 65px;
+
+    background: #ffffff;
+
+    border-top:
+        1px solid var(--border);
+
+    display: flex;
+
+    justify-content: space-around;
+
+    align-items: center;
+
+    z-index: 20;
+
+}
+
+
+.nav-item {
+
+    border: none;
+
+    background: transparent;
+
+    color: #999999;
+
+    font-size: 10px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 4px;
+
+}
+
+
+.nav-icon {
+
+    font-size: 19px;
+
+}
+
+
+.nav-item.active {
+
+    color: var(--green);
+
+    font-weight: 700;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .main {
+
+        padding-left: 14px;
+
+        padding-right: 14px;
+
+    }
+
+    .wallet-balance {
+
+        font-size: 29px;
+
+    }
+
+    .amounts {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="header">
+
+
+    <div class="header-brand">
+
+        <img
+            src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdkbmTZN-xZ5NCw8LmJmvBK9POVHchnenaGY-HNl9v-zfSHui2iDxA4oQJahyjomIIrrF1ivfXnup0AJbsDVRFzLn97qzK_3XUlYMHwHBbCuUr72m0D1QoRI1M7eVJa92BYIG2W-S9rnln4f8v0Y2wBB-F6HBAH99RGyx7mOHGQAhwGk_w_y1y_xPGBOA/s325/WhatsApp%20Image%202026-09-07%20at%2000.06.07%20(1).jpeg"
+            class="header-logo"
+            alt="Clerval's Network">
+
+        <span class="header-name">
+
+            Clerval's Network
+
+        </span>
+
+    </div>
+
+
+    <button
+        class="profile-button"
+        onclick="goToAccount()">
+
+        👤
+
+    </button>
+
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+
+    <h1 class="page-title">
+
+        Mon Wallet
+
+    </h1>
+
+
+    <p class="page-subtitle">
+
+        Gérez votre solde et vos transactions.
+
+    </p>
+
+
+
+    <!-- =================================================
+         WALLET
+    ================================================== -->
+
+    <div class="wallet-card">
+
+
+        <div class="wallet-label">
+
+            SOLDE DISPONIBLE
+
+        </div>
+
+
+        <div class="wallet-balance">
+
+            <span id="balance">
+
+                0.00
+
+            </span>
+
+            <span class="wallet-currency">
+
+                GDES
+
+            </span>
+
+        </div>
+
+
+        <div class="wallet-bottom">
+
+            <span class="wallet-status">
+
+                ● Wallet actif
+
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         RECHARGER
+    ================================================== -->
+
+    <button
+        class="recharge-button"
+        id="rechargeButton">
+
+        + RENFLOUER MON WALLET
+
+    </button>
+
+
+
+    <!-- =================================================
+         PAYMENT
+    ================================================== -->
+
+    <section
+        class="payment-card"
+        id="paymentCard">
+
+
+        <h2 class="payment-title">
+
+            Renflouer mon wallet
+
+        </h2>
+
+
+        <p class="payment-description">
+
+            Choisissez le montant que vous souhaitez
+            ajouter à votre wallet.
+
+        </p>
+
+
+        <!-- LOGAPAY -->
+
+        <div class="logapay">
+
+
+            <div class="logapay-icon">
+
+                LP
+
+            </div>
+
+
+            <div>
+
+                <div class="logapay-name">
+
+                    LogaPay
+
+                </div>
+
+
+                <div class="logapay-text">
+
+                    Paiement sécurisé
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- MESSAGE -->
+
+        <div
+            id="paymentMessage"
+            class="message">
+        </div>
+
+
+
+        <!-- MONTANTS -->
+
+        <label class="input-label">
+
+            Montant
+
+        </label>
+
+
+        <div class="amounts">
+
+
+            <button
+                class="amount"
+                data-value="100">
+
+                100 GDES
+
+            </button>
+
+
+            <button
+                class="amount"
+                data-value="250">
+
+                250 GDES
+
+            </button>
+
+
+            <button
+                class="amount"
+                data-value="500">
+
+                500 GDES
+
+            </button>
+
+
+            <button
+                class="amount"
+                data-value="1000">
+
+                1 000 GDES
+
+            </button>
+
+
+            <button
+                class="amount"
+                data-value="2500">
+
+                2 500 GDES
+
+            </button>
+
+
+            <button
+                class="amount"
+                data-value="5000">
+
+                5 000 GDES
+
+            </button>
+
+
+        </div>
+
+
+
+        <!-- MONTANT PERSONNALISE -->
+
+        <div class="input-group">
+
+
+            <label
+                class="input-label"
+                for="customAmount">
+
+                Ou entrez un montant
+
+            </label>
+
+
+            <input
+                type="number"
+                id="customAmount"
+                class="input"
+                min="1"
+                placeholder="Ex. 750">
+
+        </div>
+
+
+
+        <!-- TELEPHONE -->
+
+        <div class="input-group">
+
+
+            <label
+                class="input-label"
+                for="phone">
+
+                Numéro LogaPay
+
+            </label>
+
+
+            <input
+                type="tel"
+                id="phone"
+                class="input"
+                placeholder="+509 0000 0000">
+
+        </div>
+
+
+
+        <!-- PAYER -->
+
+        <button
+            class="pay-button"
+            id="payButton">
+
+            CONTINUER AVEC LOGAPAY
+
+        </button>
+
+
+    </section>
+
+
+
+    <!-- =================================================
+         HISTORIQUE
+    ================================================== -->
+
+    <h2 class="history-title">
+
+        Transactions récentes
+
+    </h2>
+
+
+    <div
+        class="history"
+        id="history">
+
+
+        <div class="empty-history">
+
+            Aucune transaction pour le moment.
+
+        </div>
+
+
+    </div>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     BOTTOM NAVIGATION
+===================================================== -->
+
+<nav class="bottom-nav">
+
+
+    <button
+        class="nav-item"
+        onclick="goToDashboard()">
+
+        <span class="nav-icon">
+            🏠
+        </span>
+
+        Accueil
+
+    </button>
+
+
+    <button
+        class="nav-item active">
+
+        <span class="nav-icon">
+            💰
+        </span>
+
+        Wallet
+
+    </button>
+
+
+    <button
+        class="nav-item"
+        onclick="goToRoulette()">
+
+        <span class="nav-icon">
+            🎯
+        </span>
+
+        Roulette
+
+    </button>
+
+
+    <button
+        class="nav-item"
+        onclick="goToAccount()">
+
+        <span class="nav-icon">
+            👤
+        </span>
+
+        Compte
+
+    </button>
+
+
+</nav>
+
+
+
+<script>
+
+/* =====================================================
+   CONFIGURATION API
+===================================================== */
+
+
+/*
+   L'URL sera ajoutée lorsque ton
+   Google Apps Script sera prêt.
+
+   Exemple :
+
+   const API_URL =
+   "https://script.google.com/macros/s/XXXXXXXX/exec";
+*/
+
+
+const API_URL = "";
+
+
+
+/* =====================================================
+   UTILISATEUR
+===================================================== */
+
+let currentUser = null;
+
+
+/* =====================================================
+   SOLDE
+===================================================== */
+
+let walletBalance = 0;
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const balanceElement =
+    document.getElementById("balance");
+
+const paymentCard =
+    document.getElementById("paymentCard");
+
+const rechargeButton =
+    document.getElementById("rechargeButton");
+
+const payButton =
+    document.getElementById("payButton");
+
+const customAmount =
+    document.getElementById("customAmount");
+
+const phoneInput =
+    document.getElementById("phone");
+
+const paymentMessage =
+    document.getElementById("paymentMessage");
+
+
+
+/* =====================================================
+   CHARGER UTILISATEUR
+===================================================== */
+
+function loadUser() {
+
+    const savedUser =
+        localStorage.getItem(
+            "clerval_user"
+        );
+
+
+    if (savedUser) {
+
+        try {
+
+            currentUser =
+                JSON.parse(savedUser);
+
+        } catch (error) {
+
+            console.error(
+                "Utilisateur invalide"
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   AFFICHER SOLDE
+===================================================== */
+
+function updateBalance() {
+
+    balanceElement.textContent =
+        Number(walletBalance)
+        .toLocaleString(
+            "fr-FR",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        );
+
+}
+
+
+/* =====================================================
+   OUVRIR RECHARGE
+===================================================== */
+
+rechargeButton.addEventListener(
+    "click",
+    function () {
+
+        paymentCard.classList.toggle(
+            "show"
+        );
+
+        if (
+            paymentCard.classList.contains(
+                "show"
+            )
+        ) {
+
+            paymentCard.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
+    }
+);
+
+
+
+/* =====================================================
+   CHOIX MONTANT
+===================================================== */
+
+document
+    .querySelectorAll(".amount")
+    .forEach(function(button) {
+
+
+        button.addEventListener(
+            "click",
+            function() {
+
+
+                document
+                    .querySelectorAll(".amount")
+                    .forEach(function(item) {
+
+                        item.classList.remove(
+                            "selected"
+                        );
+
+                    });
+
+
+                this.classList.add(
+                    "selected"
+                );
+
+
+                customAmount.value =
+                    this.dataset.value;
+
+            }
+        );
+
+
+    });
+
+
+
+/* =====================================================
+   MESSAGE PAIEMENT
+===================================================== */
+
+function showPaymentMessage(
+    text,
+    type
+) {
+
+    paymentMessage.textContent =
+        text;
+
+    paymentMessage.className =
+        "message show " + type;
+
+}
+
+
+function hidePaymentMessage() {
+
+    paymentMessage.textContent = "";
+
+    paymentMessage.className =
+        "message";
+
+}
+
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+function setPaymentLoading(
+    loading
+) {
+
+    if (loading) {
+
+        payButton.disabled = true;
+
+        payButton.innerHTML =
+            '<span class="loader"></span>Traitement...';
+
+    } else {
+
+        payButton.disabled = false;
+
+        payButton.textContent =
+            "CONTINUER AVEC LOGAPAY";
+
+    }
+
+}
+
+
+
+/* =====================================================
+   RECHARGE WALLET
+===================================================== */
+
+async function rechargeWallet() {
+
+
+    hidePaymentMessage();
+
+
+    const amount =
+        Number(
+            customAmount.value
+        );
+
+
+    const phone =
+        phoneInput.value.trim();
+
+
+
+    /* VALIDATION */
+
+    if (!amount || amount <= 0) {
+
+        showPaymentMessage(
+            "Veuillez sélectionner ou entrer un montant.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!phone) {
+
+        showPaymentMessage(
+            "Veuillez entrer votre numéro LogaPay.",
+            "error"
+        );
+
+        phoneInput.focus();
+
+        return;
+
+    }
+
+
+
+    /* UTILISATEUR */
+
+    if (!currentUser) {
+
+        showPaymentMessage(
+            "Votre session utilisateur est introuvable. Veuillez vous reconnecter.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+
+    setPaymentLoading(true);
+
+
+
+    /* =================================================
+       APPEL API
+    ================================================== */
+
+
+    if (!API_URL) {
+
+        /*
+           BACKEND NON CONNECTÉ
+
+           On ne crédite surtout PAS le wallet
+           ici.
+
+           Cette simulation sera supprimée lorsque
+           LogaPay sera connecté.
+        */
+
+
+        setTimeout(
+            function() {
+
+                setPaymentLoading(false);
+
+                showPaymentMessage(
+                    "Le paiement LogaPay n'est pas encore connecté au serveur.",
+                    "error"
+                );
+
+            },
+            800
+        );
+
+
+        return;
+
+    }
+
+
+
+    /* =================================================
+       APPEL GOOGLE APPS SCRIPT
+    ================================================== */
+
+    try {
+
+
+        const response =
+            await fetch(
+                API_URL,
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "text/plain;charset=utf-8"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            action:
+                                "wallet_recharge",
+
+                            userId:
+                                currentUser.id,
+
+                            phone:
+                                phone,
+
+                            amount:
+                                amount
+
+                        })
+
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+
+        /* ERREUR */
+
+        if (!result.success) {
+
+            setPaymentLoading(false);
+
+            showPaymentMessage(
+                result.message ||
+                "Le paiement n'a pas pu être effectué.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+
+        /* =================================================
+           PAIEMENT ACCEPTÉ
+        ================================================== */
+
+
+        setPaymentLoading(false);
+
+
+        /*
+           Le backend doit renvoyer le nouveau
+           solde uniquement après confirmation
+           du paiement.
+        */
+
+
+        if (
+            typeof result.balance !==
+            "undefined"
+        ) {
+
+            walletBalance =
+                Number(
+                    result.balance
+                );
+
+            updateBalance();
+
+        }
+
+
+        showPaymentMessage(
+            result.message ||
+            "Votre wallet a été rechargé avec succès.",
+            "success"
+        );
+
+
+        loadTransactions();
+
+
+    } catch (error) {
+
+
+        console.error(
+            "Erreur LogaPay :",
+            error
+        );
+
+
+        setPaymentLoading(false);
+
+
+        showPaymentMessage(
+            "Impossible de contacter le serveur. Vérifiez votre connexion.",
+            "error"
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   BOUTON PAIEMENT
+===================================================== */
+
+payButton.addEventListener(
+    "click",
+    rechargeWallet
+);
+
+
+
+/* =====================================================
+   TRANSACTIONS
+===================================================== */
+
+async function loadTransactions() {
+
+
+    /*
+       Cette fonction sera connectée au backend.
+
+       Exemple :
+
+       action: "wallet_transactions"
+
+    */
+
+
+    if (!API_URL || !currentUser) {
+
+        return;
+
+    }
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                API_URL,
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "text/plain;charset=utf-8"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            action:
+                                "wallet_transactions",
+
+                            userId:
+                                currentUser.id
+
+                        })
+
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!result.success) {
+
+            return;
+
+        }
+
+
+        renderTransactions(
+            result.transactions || []
+        );
+
+
+        if (
+            typeof result.balance !==
+            "undefined"
+        ) {
+
+            walletBalance =
+                Number(
+                    result.balance
+                );
+
+            updateBalance();
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur transactions :",
+            error
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   AFFICHER TRANSACTIONS
+===================================================== */
+
+function renderTransactions(
+    transactions
+) {
+
+
+    const history =
+        document.getElementById(
+            "history"
+        );
+
+
+    if (
+        !transactions ||
+        transactions.length === 0
+    ) {
+
+        history.innerHTML = `
+
+            <div class="empty-history">
+
+                Aucune transaction pour le moment.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    history.innerHTML =
+        transactions
+        .map(function(transaction) {
+
+
+            const isCredit =
+                transaction.type ===
+                "credit";
+
+
+            const sign =
+                isCredit
+                ? "+"
+                : "-";
+
+
+            const cssClass =
+                isCredit
+                ? "credit"
+                : "debit";
+
+
+            const icon =
+                isCredit
+                ? "↓"
+                : "↑";
+
+
+            return `
+
+                <div class="transaction">
+
+                    <div class="transaction-left">
+
+                        <div class="transaction-icon">
+
+                            ${icon}
+
+                        </div>
+
+                        <div>
+
+                            <div class="transaction-name">
+
+                                ${escapeHTML(
+                                    transaction.label ||
+                                    "Transaction"
+                                )}
+
+                            </div>
+
+                            <div class="transaction-date">
+
+                                ${escapeHTML(
+                                    transaction.date ||
+                                    ""
+                                )}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="transaction-amount ${cssClass}">
+
+                        ${sign}
+                        ${Number(
+                            transaction.amount || 0
+                        ).toLocaleString("fr-FR")}
+                        GDES
+
+                    </div>
+
+                </div>
+
+            `;
+
+        })
+        .join("");
+
+}
+
+
+
+/* =====================================================
+   PROTECTION HTML
+===================================================== */
+
+function escapeHTML(value) {
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function goToDashboard() {
+
+    window.location.href =
+        "achtekod.html";
+
+}
+
+
+function goToRoulette() {
+
+    window.location.href =
+        "roulette.html";
+
+}
+
+
+function goToAccount() {
+
+    window.location.href =
+        "compte.html";
+
+}
+
+
+
+/* =====================================================
+   INITIALISATION
+===================================================== */
+
+loadUser();
+
+updateBalance();
+
+loadTransactions();
+
+
+</script>
+
+
+</body>
+
+</html>
