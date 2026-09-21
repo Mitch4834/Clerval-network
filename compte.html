@@ -2243,57 +2243,125 @@ if (!token) {
 
 async function loadProfile() {
 
+  console.log("=================================");
+  console.log("CHARGEMENT DU PROFIL");
+  console.log("TOKEN :", token ? "PRÉSENT" : "ABSENT");
+  console.log("API :", API_URL);
+  console.log("=================================");
+
+  if (!token) {
+
+    console.error("AUCUN TOKEN DE SESSION");
+
+    showLoginRequired();
+
+    return;
+  }
+
   try {
 
-    const response =
-      await fetch(API_URL, {
+    const controller = new AbortController();
 
-        method: "POST",
+    const timeout = setTimeout(function () {
 
-        headers: {
-          "Content-Type":
-            "text/plain;charset=utf-8"
-        },
+      controller.abort();
 
-        body: JSON.stringify({
-
-          action:
-            "getMyProfile",
-
-          token:
-            token
-
-        })
-
-      });
+    }, 15000);
 
 
-    const result =
-      await response.json();
+    console.log("ENVOI REQUÊTE getMyProfile...");
+
+
+    const response = await fetch(API_URL, {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+
+      body: JSON.stringify({
+
+        action: "getMyProfile",
+
+        token: token
+
+      }),
+
+      signal: controller.signal
+
+    });
+
+
+    clearTimeout(timeout);
 
 
     console.log(
-      "PROFIL :",
-      result
+      "RÉPONSE HTTP :",
+      response.status,
+      response.statusText
     );
 
 
-    if (
-      !result ||
-      !result.success
-    ) {
+    const rawText = await response.text();
 
-      showLoginRequired();
 
-      return;
+    console.log(
+      "RÉPONSE BRUTE :",
+      rawText
+    );
+
+
+    let result;
+
+    try {
+
+      result = JSON.parse(rawText);
+
+    } catch (jsonError) {
+
+      console.error(
+        "ERREUR JSON :",
+        jsonError
+      );
+
+      throw new Error(
+        "Le serveur n'a pas retourné un JSON valide."
+      );
 
     }
 
 
-    /*
-     * Synchroniser l'utilisateur
-     * dans localStorage.
-     */
+    console.log(
+      "RÉSULTAT PROFIL :",
+      result
+    );
+
+
+    if (!result || !result.success) {
+
+      console.error(
+        "PROFIL REFUSÉ :",
+        result
+      );
+
+      showMessage(
+
+        result && result.message
+          ? result.message
+          : "Impossible de charger votre profil.",
+
+        "error"
+
+      );
+
+      return;
+    }
+
+
+    /* ======================================================
+       SYNCHRONISER UTILISATEUR
+    ====================================================== */
 
     if (result.user) {
 
@@ -2301,15 +2369,13 @@ async function loadProfile() {
 
         localStorage.setItem(
           "clerval_user",
-          JSON.stringify(
-            result.user
-          )
+          JSON.stringify(result.user)
         );
 
       } catch (error) {
 
         console.error(
-          "Erreur sauvegarde utilisateur :",
+          "ERREUR LOCALSTORAGE :",
           error
         );
 
@@ -2318,218 +2384,62 @@ async function loadProfile() {
     }
 
 
+    console.log(
+      "UTILISATEUR REÇU :",
+      result.user
+    );
+
+
+    /* ======================================================
+       AFFICHER PROFIL
+    ====================================================== */
+
     displayProfile(
       result.user
+    );
+
+
+    console.log(
+      "PROFIL AFFICHÉ AVEC SUCCÈS"
     );
 
 
   } catch (error) {
 
     console.error(
-      "ERREUR PROFIL :",
+      "================================="
+    );
+
+    console.error(
+      "ERREUR CHARGEMENT PROFIL :",
       error
     );
 
-
-    showMessage(
-      "Impossible de charger votre compte.",
-      "error"
+    console.error(
+      "================================="
     );
 
-  }
 
-}
+    if (error.name === "AbortError") {
 
+      showMessage(
+        "Le serveur met trop de temps à répondre. Vérifiez votre connexion ou le serveur Apps Script.",
+        "error"
+      );
 
-/* ==========================================================
-   AFFICHER PROFIL
-========================================================== */
+    } else {
 
-function displayProfile(user) {
+      showMessage(
+        "Impossible de charger votre compte : " +
+        error.message,
+        "error"
+      );
 
-  if (!user) {
-
-    showLoginRequired();
-
-    return;
-
-  }
-
-
-  const name =
-    user.name ||
-    "Utilisateur";
-
-
-  const firstLetter =
-    name
-      .trim()
-      .charAt(0)
-      .toUpperCase();
-
-
-  const avatar =
-    document.getElementById("avatar");
-
-  if (avatar) {
-
-    avatar.textContent =
-      firstLetter || "?";
-
-  }
-
-
-  const profileName =
-    document.getElementById("profileName");
-
-  if (profileName) {
-
-    profileName.textContent =
-      name;
-
-  }
-
-
-  const profilePhone =
-    document.getElementById("profilePhone");
-
-  if (profilePhone) {
-
-    profilePhone.textContent =
-      user.phone ||
-      "Téléphone non renseigné";
-
-  }
-
-
-  const profileStatus =
-    document.getElementById("profileStatus");
-
-  if (profileStatus) {
-
-    profileStatus.textContent =
-      user.status ||
-      "Actif";
-
-  }
-
-
-  const infoId =
-    document.getElementById("infoId");
-
-  if (infoId) {
-
-    infoId.textContent =
-      user.id ||
-      currentUserId ||
-      "—";
-
-  }
-
-
-  const infoName =
-    document.getElementById("infoName");
-
-  if (infoName) {
-
-    infoName.textContent =
-      name;
-
-  }
-
-
-  const infoPhone =
-    document.getElementById("infoPhone");
-
-  if (infoPhone) {
-
-    infoPhone.textContent =
-      user.phone ||
-      "Non renseigné";
-
-  }
-
-
-  const infoEmail =
-    document.getElementById("infoEmail");
-
-  if (infoEmail) {
-
-    infoEmail.textContent =
-      user.email ||
-      "Non renseignée";
-
-  }
-
-
-  const infoStatus =
-    document.getElementById("infoStatus");
-
-  if (infoStatus) {
-
-    infoStatus.textContent =
-      user.status ||
-      "Actif";
-
-  }
-
-
-  const editName =
-    document.getElementById("editName");
-
-  if (editName) {
-
-    editName.value =
-      user.name || "";
-
-  }
-
-
-  const editPhone =
-    document.getElementById("editPhone");
-
-  if (editPhone) {
-
-    editPhone.value =
-      user.phone || "";
-
-  }
-
-
-  const editEmail =
-    document.getElementById("editEmail");
-
-  if (editEmail) {
-
-    editEmail.value =
-      user.email || "";
-
-  }
-
-
-  const loading =
-    document.getElementById("loading");
-
-  if (loading) {
-
-    loading.style.display =
-      "none";
-
-  }
-
-
-  const account =
-    document.getElementById("account");
-
-  if (account) {
-
-    account.style.display =
-      "block";
+    }
 
   }
 
 }
-
 
 /* ==========================================================
    NAVIGATION GÉNÉRALE GITHUB
