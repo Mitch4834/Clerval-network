@@ -1784,11 +1784,41 @@ Chargement de votre compte...
 
 </div>
 
-
-
+<div id="debugInfo"
+style="
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:999999;
+background:#222;
+color:#fff;
+padding:15px;
+font-family:Arial,sans-serif;
+font-size:15px;
+">
+TEST : compte.html est chargé
+</div>
 
 <script>
+console.log("========== COMPTE.HTML ==========");
+console.log("JAVASCRIPT CHARGÉ");
 
+const debugInfo =
+  document.getElementById("debugInfo");
+
+if (debugInfo) {
+
+  debugInfo.innerHTML =
+    "JAVASCRIPT CHARGÉ<br>" +
+    "Token : " +
+    (
+      localStorage.getItem("clerval_token")
+        ? "PRÉSENT"
+        : "ABSENT"
+    );
+
+}
 /* ==========================================================
    CONFIGURATION
 ========================================================== */
