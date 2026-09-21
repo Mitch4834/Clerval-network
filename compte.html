@@ -1025,7 +1025,157 @@ body {
   }
 
 }
+/* ==========================================================
+   WIFI CONTROL
+========================================================== */
 
+.wifi-control {
+
+  margin-top: 15px;
+
+  padding: 12px;
+
+  background:
+    var(--green-light);
+
+  border-radius: 14px;
+
+  min-width: 230px;
+
+}
+
+
+.wifi-status-row {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap: 10px;
+
+}
+
+
+.wifi-icon {
+
+  width: 42px;
+
+  height: 42px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 20px;
+
+  background: #eee;
+
+}
+
+
+.wifi-icon.on {
+
+  background: #dff2c3;
+
+}
+
+
+.wifi-icon.off {
+
+  background: #ffe4e1;
+
+}
+
+
+.wifi-status-text {
+
+  font-size: 14px;
+
+  font-weight: bold;
+
+}
+
+
+.wifi-status-text.on {
+
+  color:
+    var(--green-dark);
+
+}
+
+
+.wifi-status-text.off {
+
+  color:
+    var(--danger);
+
+}
+
+
+.wifi-plan-text {
+
+  margin-top: 3px;
+
+  font-size: 11px;
+
+  color:
+    var(--gray);
+
+}
+
+
+.wifi-button {
+
+  width: 100%;
+
+  margin-top: 10px;
+
+  padding: 10px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  cursor: pointer;
+
+  font-weight: bold;
+
+}
+
+
+.wifi-button.on {
+
+  background:
+    var(--danger);
+
+  color:
+    white;
+
+}
+
+
+.wifi-button.off {
+
+  background:
+    var(--green);
+
+  color:
+    white;
+
+}
+
+
+.wifi-button:hover {
+
+  opacity: 0.9;
+
+}
 </style>
 
 </head>
