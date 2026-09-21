@@ -1888,7 +1888,324 @@ function getUserIdFromUrl() {
 
 }
 
+/* ==========================================================
+   WIFI — CHARGER LE STATUT
+========================================================== */
 
+async function loadWifiStatus() {
+
+  if (!token) {
+
+    return;
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        API_URL,
+        {
+
+          method: "POST",
+
+          headers: {
+
+            "Content-Type":
+              "text/plain;charset=utf-8"
+
+          },
+
+          body: JSON.stringify({
+
+            action:
+              "getWifiStatus",
+
+            token:
+              token
+
+          })
+
+        }
+      );
+
+
+    const result =
+      await response.json();
+
+
+    console.log(
+      "STATUT WIFI :",
+      result
+    );
+
+
+    updateWifiInterface(
+      result
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "ERREUR WIFI :",
+      error
+    );
+
+
+    updateWifiInterface({
+
+      success: false,
+
+      wifiOn: false
+
+    });
+
+  }
+
+}
+
+
+/* ==========================================================
+   WIFI — AFFICHAGE
+========================================================== */
+
+function updateWifiInterface(
+  result
+) {
+
+  const icon =
+    document.getElementById(
+      "wifiIcon"
+    );
+
+  const statusText =
+    document.getElementById(
+      "wifiStatusText"
+    );
+
+  const planText =
+    document.getElementById(
+      "wifiPlanText"
+    );
+
+  const button =
+    document.getElementById(
+      "wifiButton"
+    );
+
+
+  if (
+    !icon ||
+    !statusText ||
+    !planText ||
+    !button
+  ) {
+
+    return;
+
+  }
+
+
+  const wifiOn =
+    result &&
+    result.success &&
+    result.wifiOn === true;
+
+
+  if (wifiOn) {
+
+    /* ====================================================
+       WIFI ON
+    ==================================================== */
+
+    icon.textContent =
+      "📶";
+
+    icon.className =
+      "wifi-icon on";
+
+
+    statusText.textContent =
+      "Wi-Fi connecté";
+
+    statusText.className =
+      "wifi-status-text on";
+
+
+    if (result.plan) {
+
+      planText.textContent =
+        "Plan : " +
+        result.plan;
+
+    } else {
+
+      planText.textContent =
+        "Plan actif";
+
+    }
+
+
+    button.textContent =
+      "DEKONEKTE";
+
+    button.className =
+      "wifi-button on";
+
+
+    button.dataset.wifi =
+      "on";
+
+
+  } else {
+
+    /* ====================================================
+       WIFI OFF
+    ==================================================== */
+
+    icon.textContent =
+      "📡";
+
+    icon.className =
+      "wifi-icon off";
+
+
+    statusText.textContent =
+      "Wi-Fi déconnecté";
+
+    statusText.className =
+      "wifi-status-text off";
+
+
+    planText.textContent =
+      "Aucun plan Wi-Fi actif";
+
+
+    button.textContent =
+      "KONEKTE";
+
+    button.className =
+      "wifi-button off";
+
+
+    button.dataset.wifi =
+      "off";
+
+  }
+
+}
+
+
+/* ==========================================================
+   WIFI — BOUTON
+========================================================== */
+
+function handleWifiButton() {
+
+  const button =
+    document.getElementById(
+      "wifiButton"
+    );
+
+
+  if (!button) {
+
+    return;
+
+  }
+
+
+  const state =
+    button.dataset.wifi;
+
+
+  /* ======================================================
+     DEKONEKTE
+  ====================================================== */
+
+  if (
+    state === "on"
+  ) {
+
+    disconnectWifi();
+
+    return;
+
+  }
+
+
+  /* ======================================================
+     KONEKTE
+  ====================================================== */
+
+  connectWifi();
+
+}
+
+
+/* ==========================================================
+   WIFI — CONNECTER
+========================================================== */
+
+function connectWifi() {
+
+  /*
+   * Pour l'instant nous envoyons
+   * l'utilisateur vers la page
+   * d'achat du plan.
+   *
+   * Lorsque le paiement sera connecté,
+   * cette fonction pourra automatiquement
+   * connecter le compte MikroTik.
+   */
+
+  const id =
+    getUserIdFromUrl();
+
+
+  if (!id) {
+
+    alert(
+      "Identifiant utilisateur introuvable."
+    );
+
+    return;
+
+  }
+
+
+  const url =
+    "achtekod.html?id=" +
+    encodeURIComponent(
+      id
+    ) +
+    "&type=plan";
+
+
+  window.location.href =
+    url;
+
+}
+
+
+/* ==========================================================
+   WIFI — DECONNECTER
+========================================================== */
+
+function disconnectWifi() {
+
+  /*
+   * Cette partie sera connectée
+   * au MikroTik dans l'étape suivante.
+   */
+
+  alert(
+    "Votre connexion Wi-Fi sera déconnectée."
+  );
+
+}
 /* ==========================================================
    ID ACTUEL
 ========================================================== */
