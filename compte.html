@@ -1148,7 +1148,54 @@ Chargement de votre compte...
     >
       —
     </div>
+<!-- ====================================================
+     WIFI
+===================================================== -->
 
+<div
+  id="wifiControl"
+  class="wifi-control"
+>
+
+  <div class="wifi-status-row">
+
+    <div
+      id="wifiIcon"
+      class="wifi-icon off"
+    >
+      📡
+    </div>
+
+    <div class="wifi-info">
+
+      <div
+        id="wifiStatusText"
+        class="wifi-status-text off"
+      >
+        Wi-Fi déconnecté
+      </div>
+
+      <div
+        id="wifiPlanText"
+        class="wifi-plan-text"
+      >
+        Aucun plan actif
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <button
+    id="wifiButton"
+    class="wifi-button off"
+    onclick="handleWifiButton()"
+  >
+    KONEKTE
+  </button>
+
+</div>
 
     <div class="status">
 
